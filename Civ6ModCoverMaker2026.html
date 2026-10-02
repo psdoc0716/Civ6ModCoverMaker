@@ -1,0 +1,2582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="color-scheme" content="light dark">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title id="pageTitle">文明6 Mod 封面制作工具 · 512×512</title>
+<style>
+/* ===== 设计令牌：极简高级 · 明暗双主题 ===== */
+:root{
+  --accent:#c9a86a;        /* 香槟金 */
+  --accent-2:#8f6f2e;
+  --on-accent:#14161a;
+  --accent-soft:rgba(201,168,106,.14);
+  --accent-line:rgba(201,168,106,.45);
+
+  --bg:#0e1013;
+  --panel:#14171b;
+  --elev:#1a1e23;
+  --line:#272d34;
+  --hair:rgba(255,255,255,.07);
+  --txt:#e4e7eb;
+  --dim:#868e99;
+  --dim-2:#5f6771;
+  --stage-a:#181c21;
+  --stage-b:#0a0c0e;
+  --shadow:0 18px 48px rgba(0,0,0,.55);
+  --ring:0 0 0 3px rgba(201,168,106,.22);
+  --scrim:rgba(10,12,15,.86);
+  --danger:#e08c8c;
+  color-scheme:dark;
+}
+html[data-theme="light"]{
+  --accent:#8a6a24;
+  --accent-2:#6b5119;
+  --on-accent:#ffffff;
+  --accent-soft:rgba(138,106,36,.10);
+  --accent-line:rgba(138,106,36,.40);
+
+  --bg:#f4f3f0;
+  --panel:#fbfaf8;
+  --elev:#f1f0ec;
+  --line:#e0ded8;
+  --hair:rgba(0,0,0,.07);
+  --txt:#1e2126;
+  --dim:#6c7178;
+  --dim-2:#9aa0a8;
+  --stage-a:#eceae6;
+  --stage-b:#dcdad5;
+  --shadow:0 16px 40px rgba(0,0,0,.14);
+  --ring:0 0 0 3px rgba(138,106,36,.18);
+  --scrim:rgba(250,250,248,.97);
+  --danger:#b03434;
+  color-scheme:light;
+}
+@media (prefers-color-scheme:light){
+  html:not([data-theme]){
+    --accent:#8a6a24; --accent-2:#6b5119; --on-accent:#ffffff;
+    --accent-soft:rgba(138,106,36,.10); --accent-line:rgba(138,106,36,.40);
+    --bg:#f4f3f0; --panel:#fbfaf8; --elev:#f1f0ec;
+    --line:#e0ded8; --hair:rgba(0,0,0,.07);
+    --txt:#1e2126; --dim:#6c7178; --dim-2:#9aa0a8;
+    --stage-a:#eceae6; --stage-b:#dcdad5;
+    --shadow:0 16px 40px rgba(0,0,0,.14);
+    --ring:0 0 0 3px rgba(138,106,36,.18);
+    --scrim:rgba(250,250,248,.97);
+    --danger:#b03434;
+    color-scheme:light;
+  }
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{background:var(--bg);color:var(--txt);overflow:hidden;
+  font:13px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  -webkit-font-smoothing:antialiased;letter-spacing:.01em;
+  transition:background .25s ease,color .25s ease}
+#app{display:flex;height:100vh}
+
+/* 细滚动条 */
+.pscroll::-webkit-scrollbar,.pscroll ::-webkit-scrollbar,#canvasArea::-webkit-scrollbar{width:9px;height:9px}
+.pscroll::-webkit-scrollbar-thumb,.pscroll ::-webkit-scrollbar-thumb,#canvasArea::-webkit-scrollbar-thumb{
+  background:var(--line);border-radius:9px;border:3px solid transparent;background-clip:content-box}
+.pscroll::-webkit-scrollbar-thumb:hover,.pscroll ::-webkit-scrollbar-thumb:hover{background:var(--dim-2);background-clip:content-box}
+.pscroll::-webkit-scrollbar-track,#canvasArea::-webkit-scrollbar-track{background:transparent}
+
+aside{width:352px;flex:0 0 352px;display:flex;flex-direction:column;background:var(--panel);min-width:0;
+  transition:background .25s ease}
+#panelL{border-right:1px solid var(--line)}
+#panelR{border-left:1px solid var(--line)}
+aside>header{padding:16px 16px 14px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;
+  justify-content:space-between;gap:10px}
+aside>header h1{font-size:12px;letter-spacing:.16em;color:var(--txt);font-weight:600;text-transform:none}
+aside>header p{font-size:11px;color:var(--dim);margin-top:3px;letter-spacing:.02em}
+/* 品牌头：logo + 字标。字标是产品名，不随界面语言翻译，所以不挂 data-i18n */
+.brand{display:flex;align-items:center;gap:9px;min-width:0}
+.brand .logo{width:26px;height:26px;flex:0 0 auto;color:var(--accent)}
+.brand h1{font-size:13px;font-weight:700;letter-spacing:.015em;color:var(--txt);white-space:nowrap}
+.brand h1 em{font-style:normal;color:var(--accent)}
+aside>footer{padding:12px;border-top:1px solid var(--line);display:flex;gap:8px;background:var(--panel)}
+aside>footer button{flex:1;padding:12px 0;font-size:13px}
+.hdctl{display:flex;align-items:center;gap:6px;flex:0 0 auto}
+/* 语言按钮：图标 + 当前语言缩写，和主题按钮同高、按内容放宽；
+   选择器要压过后面的 button.icon{width:28px}，所以写成双类 */
+button.icon.langbtn{width:auto;padding:0 9px;gap:5px;border-radius:999px}
+button.icon.langbtn svg{width:13px;height:13px;flex:0 0 auto;fill:none;stroke:currentColor;stroke-width:1.15}
+button.icon.langbtn b{font-size:10px;font-weight:600;letter-spacing:.06em;line-height:1}
+.pscroll{flex:1;overflow-y:auto;padding:14px 16px 22px}
+@media (max-width:1180px){aside{width:300px;flex:0 0 300px}}
+
+/* ---------- 中间舞台 ---------- */
+#stage{flex:1;display:flex;flex-direction:column;min-width:0;
+  background:radial-gradient(120% 120% at 50% 40%,var(--stage-a),var(--stage-b) 78%)}
+#stageBar{display:flex;align-items:center;gap:6px;padding:10px 14px;border-bottom:1px solid var(--line);
+  background:transparent;flex-wrap:wrap}
+#canvasArea{flex:1;display:flex;align-items:center;justify-content:center;overflow:auto;padding:20px}
+#canvasBox{position:relative;flex:0 0 auto;box-shadow:var(--shadow),0 0 0 1px var(--line)}
+#cv{display:block;background:var(--stage-b);touch-action:none;cursor:default}
+#selBox{position:absolute;display:none;border:1px solid var(--accent);pointer-events:none;
+  box-shadow:0 0 0 1px rgba(0,0,0,.35)}
+/* 多选时非锚点图层的选框。只能放 DOM 覆盖层：画进 canvas 会被一起导出成 PNG */
+#multiBox{position:absolute;inset:0;pointer-events:none}
+.xbox{position:absolute;display:none;border:1px dashed var(--accent);pointer-events:none;opacity:.72}
+.hd{position:absolute;width:10px;height:10px;background:var(--panel);border:1.5px solid var(--accent);
+  border-radius:2px;pointer-events:auto;display:none}
+.hd.show{display:block}
+.hd[data-h="nw"],.hd[data-h="se"]{cursor:nwse-resize}
+.hd[data-h="ne"],.hd[data-h="sw"]{cursor:nesw-resize}
+#guideV,#guideH{position:absolute;background:var(--accent);display:none;pointer-events:none;z-index:4;opacity:.85}
+#guideV{width:1px;top:0;bottom:0}
+#guideH{height:1px;left:0;right:0}
+#textEditor{position:absolute;display:none;resize:none;overflow:hidden;background:rgba(0,0,0,.34);
+  border:1px solid var(--accent-line);border-radius:4px;outline:none;padding:2px 4px;margin:0;white-space:pre;
+  z-index:5;box-shadow:var(--ring)}
+#statusBar{padding:8px 14px;border-top:1px solid var(--line);font-size:11px;color:var(--dim);
+  display:flex;gap:12px;letter-spacing:.02em}
+#statusBar b{color:var(--txt);font-weight:600}
+
+/* ---------- 折叠卡片 ---------- */
+.mod{border:1px solid var(--line);border-radius:10px;margin-bottom:10px;overflow:hidden;
+  background:transparent;transition:border-color .18s ease}
+.mod:hover{border-color:var(--hair)}
+.mod>h2{padding:11px 13px;font-size:12px;letter-spacing:.08em;color:var(--txt);cursor:pointer;
+  display:flex;align-items:center;gap:8px;user-select:none;
+  background:transparent;font-weight:600}
+.mod>h2::after{content:"";order:3;width:6px;height:6px;border-right:1.5px solid var(--dim-2);
+  border-bottom:1.5px solid var(--dim-2);transform:rotate(45deg) translateY(-1px);
+  transition:transform .2s ease;flex:0 0 auto}
+.mod[data-open="0"]>h2::after{transform:rotate(-45deg) translateY(1px)}
+.mod>h2 i{color:var(--dim);font-style:normal;font-size:10px;font-weight:400;letter-spacing:0;
+  margin-left:auto;order:2;text-align:right}
+.mod[data-open="0"] .modb{display:none}
+.modb{padding:4px 13px 14px;display:flex;flex-direction:column;gap:10px}
+
+/* ---------- 表单 ---------- */
+.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.row>label{width:58px;flex:0 0 58px;font-size:11px;color:var(--dim);letter-spacing:.03em}
+/* 标签宽度随语言调整：拉丁/西里尔单词更长，否则会被截断 */
+html[data-lang="en"] .row>label{width:74px;flex:0 0 74px}
+html[data-lang="fr"] .row>label{width:82px;flex:0 0 82px}
+html[data-lang="ru"] .row>label{width:94px;flex:0 0 94px}
+html:not([data-lang="zh"]) .row>label{letter-spacing:0}
+html:not([data-lang="zh"]) .mod>h2{letter-spacing:.04em}
+html:not([data-lang="zh"]) button,html:not([data-lang="zh"]) .tabs button{padding-left:8px;padding-right:8px}
+html:not([data-lang="zh"]) .tabs button{min-width:38px;flex:1 0 auto}
+/* 非 CJK 语言下按钮不缩量，宁可换行也不截断文字 */
+html:not([data-lang="zh"]) .row>button{flex:0 0 auto}
+html:not([data-lang="zh"]) .row{row-gap:6px}
+/* 折叠标题：主标题不折行；非中文时副标题过长就换到第二行，不截断 */
+.mod>h2 span{white-space:nowrap;flex:0 0 auto}
+html:not([data-lang="zh"]) .mod>h2{flex-wrap:wrap;row-gap:2px}
+html:not([data-lang="zh"]) .mod>h2 i{order:4;flex:1 1 100%;margin-left:0;text-align:left;white-space:normal;line-height:1.35}
+html:not([data-lang="zh"]) .mod>h2::after{margin-left:auto}
+.row.wrap{flex-wrap:wrap}
+input[type=text],input[type=number],select,textarea{flex:1;min-width:0;background:var(--elev);
+  border:1px solid var(--line);color:var(--txt);padding:6px 8px;border-radius:6px;font:inherit;
+  transition:border-color .16s ease,box-shadow .16s ease}
+input[type=text]:focus,input[type=number]:focus,select:focus,textarea:focus{
+  outline:none;border-color:var(--accent-line);box-shadow:var(--ring)}
+textarea{font-family:inherit;resize:vertical;min-height:46px}
+input[type=number]{flex:0 0 62px}
+select{appearance:none;-webkit-appearance:none;padding-right:22px;
+  background-image:linear-gradient(45deg,transparent 50%,var(--dim) 50%),linear-gradient(135deg,var(--dim) 50%,transparent 50%);
+  background-position:calc(100% - 12px) 55%,calc(100% - 8px) 55%;background-size:4px 4px;background-repeat:no-repeat}
+option{background:var(--panel);color:var(--txt)}
+optgroup{color:var(--dim);font-style:normal}
+input[type=range]{flex:1;accent-color:var(--accent);min-width:0;height:18px;background:transparent;
+  -webkit-appearance:none;appearance:none;cursor:pointer}
+input[type=range]::-webkit-slider-runnable-track{height:2px;background:var(--line);border-radius:2px}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;
+  background:var(--accent);margin-top:-5px;border:2px solid var(--panel);
+  box-shadow:0 0 0 1px var(--accent-line)}
+input[type=range]::-moz-range-track{height:2px;background:var(--line);border-radius:2px}
+input[type=range]::-moz-range-thumb{width:11px;height:11px;border:2px solid var(--panel);border-radius:50%;
+  background:var(--accent);box-shadow:0 0 0 1px var(--accent-line)}
+input[type=color]{width:30px;height:26px;flex:0 0 30px;border:1px solid var(--line);background:var(--elev);
+  padding:2px;border-radius:6px;cursor:pointer}
+input[type=color]::-webkit-color-swatch-wrapper{padding:0}
+input[type=color]::-webkit-color-swatch{border:none;border-radius:4px}
+
+/* ---------- 按钮 ---------- */
+button{background:var(--elev);border:1px solid var(--line);color:var(--txt);padding:6px 10px;border-radius:6px;
+  font:inherit;font-size:11px;cursor:pointer;letter-spacing:.02em;white-space:nowrap;
+  transition:border-color .16s ease,background .16s ease,color .16s ease}
+button:hover{border-color:var(--accent-line);color:var(--accent);background:var(--accent-soft)}
+button:focus-visible{outline:none;box-shadow:var(--ring)}
+button.on{background:var(--accent-soft);border-color:var(--accent-line);color:var(--accent);font-weight:600}
+button.big{padding:11px;font-size:12px}
+button.pri{background:var(--accent);border-color:var(--accent);color:var(--on-accent);font-weight:600}
+button.pri:hover{background:var(--accent-2);border-color:var(--accent-2);color:var(--on-accent)}
+button.icon{padding:0;width:28px;height:28px;flex:0 0 auto;display:inline-flex;align-items:center;
+  justify-content:center;border-radius:50%;background:transparent;color:var(--dim);line-height:1}
+button.icon:hover{color:var(--accent);border-color:var(--accent-line);background:var(--accent-soft)}
+.tabs{display:flex;gap:5px;flex-wrap:wrap}
+.tabs button{flex:1;min-width:44px}
+.hint{font-size:11px;color:var(--dim);line-height:1.5}
+.pal{display:flex;gap:4px;flex-wrap:wrap}
+.pal i{width:18px;height:18px;border:1px solid var(--line);cursor:pointer;display:block;border-radius:4px;
+  transition:transform .14s ease,border-color .14s ease}
+.pal i:hover{border-color:var(--accent);transform:translateY(-1px)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(56px,1fr));gap:6px;max-height:180px;
+  overflow-y:auto;padding:2px}
+/* 空分类提示横跨整行，否则会被压成一列竖排文字 */
+.grid>.hint{grid-column:1/-1}
+.cell{position:relative;border:1px solid var(--line);border-radius:7px;background:var(--elev);cursor:pointer;
+  padding:3px;text-align:center;transition:border-color .16s ease,background .16s ease}
+.cell:hover{border-color:var(--accent-line)}
+.cell.on{border-color:var(--accent);background:var(--accent-soft)}
+.cell img{width:100%;height:40px;object-fit:contain;display:block}
+.cell span{font-size:9px;color:var(--dim);display:block;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+/* 只有自定义上传的素材挂删除角标，官方在线素材删不掉也不该显示 */
+.cell .rm{position:absolute;top:2px;right:2px;width:16px;height:16px;padding:0;border-radius:50%;
+  background:var(--panel);border:1px solid var(--line);color:var(--dim);font-size:12px;line-height:1;
+  display:flex;align-items:center;justify-content:center;opacity:.7}
+.cell .rm:hover{opacity:1;color:var(--danger);border-color:var(--danger)}
+.chk{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);cursor:pointer;user-select:none}
+.chk input{accent-color:var(--accent)}
+.sep{height:1px;background:var(--line);margin:2px 0}
+
+#layerList{max-height:220px;overflow-y:auto;display:flex;flex-direction:column;gap:4px}
+.lrow{display:flex;align-items:center;gap:7px;padding:7px 8px;border:1px solid transparent;border-radius:7px;
+  cursor:pointer;background:var(--elev);transition:border-color .16s ease,background .16s ease}
+.lrow:hover{border-color:var(--accent-line)}
+.lrow.on{border-color:var(--accent);background:var(--accent-soft)}
+/* 多选组里非锚点的成员：同底色、虚线框，与实线框的当前图层区分 */
+.lrow.in{border-color:var(--accent-line);border-style:dashed;background:var(--accent-soft)}
+.lrow b{flex:0 0 auto;width:18px;height:18px;line-height:16px;text-align:center;font-size:10px;font-weight:400;
+  color:var(--accent);border:1px solid var(--line);border-radius:5px;background:var(--panel)}
+.lrow .ln{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:11px}
+.lrow.off .ln,.lrow.off b{opacity:.42}
+.lrow input{accent-color:var(--accent);flex:0 0 auto}
+
+/* ---------- 拉取素材遮罩 ---------- */
+#gate{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:14px;background:var(--scrim);text-align:center;padding:28px;z-index:9;
+  -webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+#gate .gwrap{max-width:400px;display:flex;flex-direction:column;align-items:center;gap:14px}
+/* 关闭按钮以整个遮罩为定位父级（.gwrap 不设 relative）：挂在内容块上会跟着正文一起居中，压住标题 */
+#gClose{position:absolute;top:8px;right:8px;z-index:2;width:28px;height:28px;border-radius:50%;
+  background:var(--panel);border:1px solid var(--dim-2);color:var(--txt);font-size:15px;line-height:1;
+  padding:0;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  box-shadow:0 2px 10px rgba(0,0,0,.22);opacity:.9}
+#gClose:hover{opacity:1;border-color:var(--accent);color:var(--accent);background:var(--accent-soft)}
+#gate h3{color:var(--txt);font-size:14px;letter-spacing:.06em;font-weight:600}
+#gate .g{max-width:380px;color:var(--dim);font-size:11px;line-height:1.65}
+#gate .g b{color:var(--accent);font-weight:600}
+#gate .btns{display:flex;flex-direction:column;gap:8px;width:240px}
+#gateChip{order:-1;align-self:center;background:transparent;border:1px solid var(--accent-line);
+  color:var(--accent);border-radius:999px;padding:2px 10px;font-size:11px}
+#gateChip:hover{background:var(--accent-soft)}
+.hide{display:none!important}
+#toast{position:fixed;left:50%;top:16px;transform:translateX(-50%);background:var(--panel);
+  border:1px solid var(--accent-line);color:var(--txt);padding:8px 16px;border-radius:999px;font-size:12px;
+  z-index:99;opacity:0;transition:opacity .25s ease;pointer-events:none;box-shadow:var(--shadow)}
+#toast.show{opacity:1}
+</style>
+<script>
+/* 主题：提前应用，避免闪烁。无记录时跟随系统 */
+(function(){ try{ var t=localStorage.getItem('civ6cover:theme');
+  if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t) }catch(e){} })();
+/* 语言：提前写好 data-lang / lang，标签宽度第一帧就到位，避免排版跳动。
+   判定逻辑与主脚本 detectLang() 保持一致，正式翻译由 applyLang/applyStatic 完成 */
+(function(){
+  var L=null;
+  try{ L=localStorage.getItem('civ6cover:lang') }catch(e){}
+  if(L!=='zh'&&L!=='en'&&L!=='fr'&&L!=='ru'){
+    L='en';
+    var list=navigator.languages||[navigator.language||''];
+    for(var i=0;i<list.length;i++){ var q=String(list[i]||'').toLowerCase().replace('_','-');
+      if(q==='zh'||q.indexOf('zh-')===0){L='zh';break}
+      if(q==='fr'||q.indexOf('fr-')===0){L='fr';break}
+      if(q==='ru'||q.indexOf('ru-')===0){L='ru';break}
+      if(q==='en'||q.indexOf('en-')===0){L='en';break} }
+  }
+  document.documentElement.setAttribute('data-lang',L);
+  document.documentElement.lang=(L==='zh'?'zh-CN':(L==='fr'?'fr-FR':(L==='ru'?'ru-RU':'en')));
+})();
+</script>
+<script>
+/* ============================ 多语言（zh / en / fr / ru） ============================
+   数据键不翻译：素材路径与分类正则、字体 family/css/href、存储键、模板里的封面文字内容。
+   这里只放界面文案；{xxx} 为参数占位符，四种语言必须使用同一组占位符。 */
+var I18N={
+  zh:{"lang.zh":"简体中文",
+    "lang.en":"English",
+    "lang.fr":"Français",
+    "lang.ru":"Русский",
+    "themeDark":"当前深色，点按切到浅色",
+    "themeLight":"当前浅色，点按切到深色",
+    "themeMore":"（连点三次跟随系统）",
+    "themeAuto":"已恢复跟随系统",
+    "m1":"① 图层",
+    "m1i":"点选或双击画布",
+    "addText":"＋ 文字",
+    "addIcon":"＋ 图标",
+    "dup":"复制",
+    "del":"删除",
+    "lbStack":"叠放",
+    "up":"上移",
+    "down":"下移",
+    "top":"置顶",
+    "bot":"置底",
+    "snap":"居中吸附（拖动时自动对齐中线 / 边线）",
+    "hintLayers":"列表自上而下＝画面自前而后。选中图标图层后可拖四角小方块等比改大小。滑块双击＝复位。Ctrl / Shift 点图层可多选，多选后一起拖动；Del 删除选中的图层。",
+    "m2":"② 文字",
+    "m2i":"双击画布可改字",
+    "txNone":"当前选中的不是文字图层。在上方图层列表点一个「文」，或按「＋ 文字」新建。",
+    "lbContent":"内容",
+    "lbFont":"字体",
+    "lbWeight":"字重",
+    "lbSize":"字号",
+    "lbTracking":"字间距",
+    "lbLineH":"行高 %",
+    "lbColor":"颜色",
+    "lbStyle":"样式",
+    "bold":"粗体",
+    "italic":"斜体",
+    "smallCaps":"小型大写",
+    "lbAlign":"对齐",
+    "alLeft":"左对齐",
+    "alCenter":"居中",
+    "alRight":"右对齐",
+    "lbPos":"位置",
+    "center":"居中",
+    "lbStroke":"描边",
+    "on":"开",
+    "lbShadow":"投影",
+    "shBlur":"模糊",
+    "shDown":"下移",
+    "m3":"③ 图标",
+    "m3i":"点缩略图即新增一层",
+    "icNone":"当前选中的是文字图层：点上面的图标缩略图会新建一个图标图层。若要改已有图标，先在图层列表点一个「图」。",
+    "lbIconSize":"大小",
+    "uploadIcon":"上传自定义图标…",
+    "uploadBg":"上传自定义背景…",
+    "uploadPlate":"上传自定义底板…",
+    "delAsset":"从本地库删除这张素材",
+    "assetRemoved":"已删除素材「{name}」",
+    "assetRemovedRef":"已删除素材「{name}」，{n} 处引用已清空",
+    "tpl1":"模板 · 封面 1",
+    "tpl2":"模板 · 封面 2",
+    "undo":"撤销",
+    "redo":"重做",
+    "reset":"清空重来",
+    "confirmReset":"清空当前所有设置，回到初始模板？",
+    "gateTitle":"正在拉取在线素材",
+    "gateBody":"素材托管在 <b>gitee.com/psdoc/civ6-mod-cover-maker</b>，首次使用需联网。<br>拉取后会缓存在浏览器本地（IndexedDB），之后断网也能用。原图只读不改。",
+    "gateRetry":"重新拉取在线素材",
+    "gateInit":"准备中…",
+    "gCloseTitle":"关闭（拉取仍在后台继续）",
+    "gCloseAria":"关闭素材拉取窗口",
+    "chipTitle":"重新显示素材拉取窗口",
+    "chipFetching":"素材拉取中 · 点击查看",
+    "chipReady":"素材已就绪 · 查看拉取信息",
+    "chipMissing":"素材未就绪 · 点击查看",
+    "chipToast":"已关闭拉取窗口，可在底部状态栏重新打开",
+    "ready":"就绪",
+    "m4":"④ 背景",
+    "m4i":"9 张素材 + 纯色/渐变",
+    "tSolid":"纯色",
+    "tGrad":"渐变",
+    "tImage":"图片",
+    "lbType":"类型",
+    "gLinear":"线性",
+    "gRadial":"径向",
+    "lbAngle":"角度",
+    "lbTwo":"两色",
+    "lbScale":"缩放 %",
+    "lbOffX":"左右偏移",
+    "lbOffY":"上下偏移",
+    "bgCenter":"背景居中",
+    "bgReset":"复位缩放与偏移",
+    "lbDim":"压暗 %",
+    "hintDim":"压暗是让文字读得清的关键，参考成品约 35–45%。偏移接近 0 会自动吸附居中。",
+    "m5":"⑤ 前景（文字底板）",
+    "m5i":"6 张素材 + 色条/渐变条",
+    "tNone":"无",
+    "tBar":"色条",
+    "tGradBar":"渐变条",
+    "tPlate":"底板图",
+    "lbHeight":"高度",
+    "tierLow":"矮",
+    "tierMid":"中",
+    "tierHigh":"高",
+    "lbEdge":"贴边",
+    "edgeBottom":"贴底",
+    "edgeTop":"贴顶",
+    "fade":"上边缘渐隐（避免生硬切边）",
+    "rule":"边缘双细金线",
+    "hintPlate":"底板素材是 512×512 整幅方图，\"高度\"三档＝取底部 512/341/170 裁切，不做纵向拉伸。",
+    "lbAlpha":"不透明 %",
+    "m6":"⑥ 边框",
+    "m6i":"3 档尺寸 · 纯色/渐变/纹理",
+    "lbBorder":"边框",
+    "enable":"启用",
+    "bdThin":"细 6",
+    "bdMid":"中 12",
+    "bdBold":"粗 20",
+    "tTexture":"纹理",
+    "lbTexture":"纹理",
+    "glow":"内侧 1px 高光线",
+    "hintTex":"纹理为程序化生成（金色拉丝 / 深色斜纹 / 石质噪点）。",
+    "m7":"⑦ 素材与存档",
+    "m7i":"自动保存已开启",
+    "refetch":"重新拉取在线素材",
+    "clearAssets":"清除素材缓存",
+    "exportJson":"导出工程 JSON",
+    "importJson":"导入工程 JSON",
+    "embed":"导出时内联自定义上传的图片",
+    "fontLoading":"字体加载中…",
+    "exportPng":"导出 PNG 512×512",
+    "preview":"预览",
+    "zipBad":"不是合法 zip（找不到 EOCD）",
+    "apiEmpty":"接口未返回内容",
+    "apiSize":"字节数不符 {a}≠{b}",
+    "zipTooBig":"assets.zip 过大，接口未返回内容",
+    "zipEmpty":"assets.zip 里没有可用素材",
+    "zipNameBad":"assets.zip 文件名编码无法识别，改用逐文件拉取",
+    "zipGot":"在线素材：assets.zip 一次取回 {n} 张",
+    "zipNo":"zip 不可用（{err}），改逐文件拉取…",
+    "alreadyAll":"在线素材：已齐 {n} 张",
+    "pull0":"逐文件拉取 0/{n}",
+    "pullN":"逐文件拉取 {done}/{total}（失败 {fail}）",
+    "pullNok":"逐文件拉取 {done}/{total}",
+    "repLine":"在线素材：{ok}/{total} 本次成功，库内共 {n} 张",
+    "repFail":"；失败 {n} 张，首个错误：{err}。反复失败多为 Gitee 接口限流——把素材打成 assets.zip 放仓库根即可一次取回。",
+    "probeZip":"探测 assets.zip…",
+    "readyN":"素材已就绪 {n} 张",
+    "toastReady":"素材就绪：背景 {bg} / 底板 {pl} / 图标 {ic}",
+    "toastMissing":"有 {n} 张素材没拉到，可点「重新拉取在线素材」",
+    "noneFetched":"一个素材都没拉到，请检查网络后重试",
+    "cacheCleared":"缓存已清空，点下方按钮重新拉取",
+    "cacheToast":"素材缓存已清除",
+    "confirmClear":"清除浏览器里缓存的素材？下次打开会重新从在线仓库拉取。",
+    "gridEmpty":"此分类暂无素材，正在从在线仓库拉取…",
+    "uploaded":"上传 · {name}",
+    "addedN":"已加入 {n} 张图片",
+    "cacheOffline":"素材来自在线缓存，断网可用",
+    "restoredN":"已从本地缓存恢复 {n} 张素材",
+    "cacheReadFail":"本地缓存读取失败：{err}",
+    "f.cn-douyin":"抖音美好体",
+    "f.cn-serif":"思源宋体",
+    "f.cn-sharkfit":"鲨鱼菲特健康体",
+    "f.cn-hei":"思源黑体（Noto）",
+    "f.cn-maple":"Maple Mono CN",
+    "f.en-cinzel":"Cinzel 罗马石刻大写",
+    "f.en-cormorant":"Cormorant SC 小大写",
+    "f.en-playfair":"Playfair Display",
+    "f.en-grotesk":"Space Grotesk 黑体",
+    "f.en-oswald":"Oswald 窄体黑体",
+    "grpCn":"中文字体",
+    "grpEn":"英文字体",
+    "notReady":"（未就绪）",
+    "fontBad":"{n} 款中 <b style=\"color:var(--danger)\">{bad}</b> 款未就绪（在线字体需联网）：<br>{list}",
+    "fontAllOk":"字体自检：{n} 款全部就绪 ✓",
+    "texBrush":"金色拉丝",
+    "texTwill":"深色斜纹",
+    "texStone":"石质噪点",
+    "rangeTitle":"拖动调节 · 双击复位为 {v}",
+    "badgeT":"文",
+    "badgeI":"图",
+    "emptyText":"（空文字）",
+    "noIcon":"未指定图标",
+    "showHide":"显示 / 隐藏",
+    "editTwice":"双击编辑文字",
+    "noUndo":"没有可撤销的操作",
+    "savedAt":"已自动保存 {time}",
+    "saveFail":"自动保存失败：{err}",
+    "scriptErr":"脚本错误：{err}",
+    "tplApplied":"已套用「{name}」",
+    "exportFail":"导出失败",
+    "pngOk":"已导出 512×512 PNG",
+    "exportDone":"导出完成 {time}",
+    "pngFailTaint":"导出失败：{err}（素材未能正常载入，请点「重新拉取在线素材」）",
+    "previewFail":"导出失败：{err}（图片不是本地导入的，请重新选择素材文件夹）",
+    "popupBlocked":"浏览器拦截了新窗口",
+    "previewTitle":"preview 512×512",
+    "projName":"封面工程.json",
+    "projExported":"工程已导出（{n} 个图层）",
+    "projImported":"工程已导入（{n} 个图层）",
+    "projImportedV1":"工程已导入（{n} 个图层，已从 v1 迁移）",
+    "jsonBad":"这个文件不是合法 JSON",
+    "verBad":"工程版本不匹配（需要 1 或 2）",
+    "restoredLayers":"已恢复上次编辑（{n} 个图层）",
+    "langTitle":"界面语言",
+    "langMore":"（点按切换，共 4 种）",
+    "stAssets":"素材：{n} 张（背景 {bg} / 底板 {pl} / 图标 {ic} / 边框纹理 {bd}）",
+    "stLayersN":"图层 {n}",
+    "title":"文明6 Mod 封面制作工具 · 512×512"},
+  en:{"lang.zh":"简体中文",
+    "lang.en":"English",
+    "lang.fr":"Français",
+    "lang.ru":"Русский",
+    "themeDark":"Dark mode — click for light",
+    "themeLight":"Light mode — click for dark",
+    "themeMore":" (triple-click follows the system)",
+    "themeAuto":"Back to following the system",
+    "m1":"① Layers",
+    "m1i":"Click or double-click the canvas",
+    "addText":"+ Text",
+    "addIcon":"+ Icon",
+    "dup":"Duplicate",
+    "del":"Delete",
+    "lbStack":"Order",
+    "up":"Up",
+    "down":"Down",
+    "top":"To front",
+    "bot":"To back",
+    "snap":"Snap to centre (aligns to midlines and edges while dragging)",
+    "hintLayers":"Top of the list = front of the image. With an icon layer selected, drag a corner square to scale it. Double-click a slider to reset it. Ctrl/Shift-click layers to select several and drag them together; Del removes the selected layers.",
+    "m2":"② Text",
+    "m2i":"Double-click the canvas to edit",
+    "txNone":"The selected layer is not a text layer. Pick a “T” in the list above, or press “+ Text”.",
+    "lbContent":"Text",
+    "lbFont":"Font",
+    "lbWeight":"Weight",
+    "lbSize":"Size",
+    "lbTracking":"Letter spacing",
+    "lbLineH":"Line height %",
+    "lbColor":"Color",
+    "lbStyle":"Style",
+    "bold":"Bold",
+    "italic":"Italic",
+    "smallCaps":"Small caps",
+    "lbAlign":"Align",
+    "alLeft":"Left",
+    "alCenter":"Center",
+    "alRight":"Right",
+    "lbPos":"Position",
+    "center":"Center",
+    "lbStroke":"Outline",
+    "on":"On",
+    "lbShadow":"Shadow",
+    "shBlur":"Blur",
+    "shDown":"Drop offset",
+    "m3":"③ Icons",
+    "m3i":"Click a thumbnail to add a layer",
+    "icNone":"A text layer is selected: clicking a thumbnail above creates a new icon layer. To change an existing icon, pick an “I” in the layer list first.",
+    "lbIconSize":"Size",
+    "uploadIcon":"Upload custom icon…",
+    "uploadBg":"Upload custom background…",
+    "uploadPlate":"Upload custom plate…",
+    "delAsset":"Remove this asset from the library",
+    "assetRemoved":"Removed asset “{name}”",
+    "assetRemovedRef":"Removed asset “{name}” — {n} reference(s) cleared",
+    "tpl1":"Template · Cover 1",
+    "tpl2":"Template · Cover 2",
+    "undo":"Undo",
+    "redo":"Redo",
+    "reset":"Reset",
+    "confirmReset":"Clear all current settings and return to the starting template?",
+    "gateTitle":"Fetching online assets",
+    "gateBody":"Assets are hosted at <b>gitee.com/psdoc/civ6-mod-cover-maker</b>; the first run needs a network connection.<br>They are then cached locally in the browser (IndexedDB) and work offline. Originals are read-only.",
+    "gateRetry":"Re-fetch online assets",
+    "gateInit":"Preparing…",
+    "gCloseTitle":"Close (fetching continues in the background)",
+    "gCloseAria":"Close the asset fetch panel",
+    "chipTitle":"Show the asset fetch panel again",
+    "chipFetching":"Fetching assets · click to view",
+    "chipReady":"Assets ready · view fetch info",
+    "chipMissing":"Assets missing · click to view",
+    "chipToast":"Fetch panel closed — reopen it from the status bar below",
+    "ready":"Ready",
+    "m4":"④ Background",
+    "m4i":"9 assets + solid/gradient",
+    "tSolid":"Solid",
+    "tGrad":"Gradient",
+    "tImage":"Image",
+    "lbType":"Type",
+    "gLinear":"Linear",
+    "gRadial":"Radial",
+    "lbAngle":"Angle",
+    "lbTwo":"Colors",
+    "lbScale":"Zoom %",
+    "lbOffX":"Offset X",
+    "lbOffY":"Offset Y",
+    "bgCenter":"Center background",
+    "bgReset":"Reset zoom and offsets",
+    "lbDim":"Dim %",
+    "hintDim":"Dimming is what keeps the text readable — finished covers use about 35–45%. Offsets near 0 snap to centre.",
+    "m5":"⑤ Foreground (text plate)",
+    "m5i":"6 assets + bar/gradient bar",
+    "tNone":"None",
+    "tBar":"Solid bar",
+    "tGradBar":"Gradient bar",
+    "tPlate":"Plate image",
+    "lbHeight":"Height",
+    "tierLow":"Short",
+    "tierMid":"Medium",
+    "tierHigh":"Tall",
+    "lbEdge":"Edge",
+    "edgeBottom":"Bottom",
+    "edgeTop":"Top",
+    "fade":"Fade the top edge (avoids a hard cut)",
+    "rule":"Double thin gold edge line",
+    "hintPlate":"Plates are full 512×512 squares. The three heights crop the bottom 512/341/170 px — no vertical stretching.",
+    "lbAlpha":"Opacity %",
+    "m6":"⑥ Border",
+    "m6i":"3 widths · solid/gradient/texture",
+    "lbBorder":"Border",
+    "enable":"Enable",
+    "bdThin":"Thin 6",
+    "bdMid":"Medium 12",
+    "bdBold":"Bold 20",
+    "tTexture":"Texture",
+    "lbTexture":"Texture",
+    "glow":"1px inner highlight",
+    "hintTex":"Textures are generated in-app (brushed gold / dark twill / stone noise).",
+    "m7":"⑦ Assets & Save",
+    "m7i":"Autosave is on",
+    "refetch":"Re-fetch online assets",
+    "clearAssets":"Clear asset cache",
+    "exportJson":"Export project JSON",
+    "importJson":"Import project JSON",
+    "embed":"Embed uploaded images in the export",
+    "fontLoading":"Loading fonts…",
+    "exportPng":"Export PNG 512×512",
+    "preview":"Preview",
+    "zipBad":"Not a valid zip (EOCD not found)",
+    "apiEmpty":"The API returned no content",
+    "apiSize":"Size mismatch {a}≠{b}",
+    "zipTooBig":"assets.zip too large, the API returned no content",
+    "zipEmpty":"assets.zip contains no usable assets",
+    "zipNameBad":"assets.zip filenames use an unrecognised encoding — falling back to per-file fetch",
+    "zipGot":"Online assets: {n} fetched in one zip",
+    "zipNo":"zip unavailable ({err}), falling back to per-file fetch…",
+    "alreadyAll":"Online assets: all {n} present",
+    "pull0":"Fetching file 0/{n}",
+    "pullN":"Fetching file {done}/{total} ({fail} failed)",
+    "pullNok":"Fetching file {done}/{total}",
+    "repLine":"Online assets: {ok}/{total} fetched now, {n} in the library",
+    "repFail":"; {n} failed. First error: {err}. Repeated failures usually mean Gitee rate limiting — pack the assets into assets.zip at the repo root to fetch them in one call.",
+    "probeZip":"Checking assets.zip…",
+    "readyN":"Assets ready: {n}",
+    "toastReady":"Assets ready — backgrounds {bg} / plates {pl} / icons {ic}",
+    "toastMissing":"{n} assets were not fetched — use “Re-fetch online assets”",
+    "noneFetched":"No assets fetched — check your connection and retry",
+    "cacheCleared":"Cache cleared — use the button below to fetch again",
+    "cacheToast":"Asset cache cleared",
+    "confirmClear":"Delete the assets cached in this browser? They will be fetched again on the next load.",
+    "gridEmpty":"Nothing in this category yet — fetching from the online repo…",
+    "uploaded":"Upload · {name}",
+    "addedN":"Added {n} image(s)",
+    "cacheOffline":"Assets come from the online cache and work offline",
+    "restoredN":"Restored {n} assets from the local cache",
+    "cacheReadFail":"Local cache read failed: {err}",
+    "f.cn-douyin":"Douyin Sans",
+    "f.cn-serif":"Source Han Serif",
+    "f.cn-sharkfit":"Sharkfit Health",
+    "f.cn-hei":"Noto Sans SC",
+    "f.cn-maple":"Maple Mono CN",
+    "f.en-cinzel":"Cinzel (Roman caps)",
+    "f.en-cormorant":"Cormorant SC",
+    "f.en-playfair":"Playfair Display",
+    "f.en-grotesk":"Space Grotesk",
+    "f.en-oswald":"Oswald Condensed",
+    "grpCn":"Chinese fonts",
+    "grpEn":"Latin fonts",
+    "notReady":" (not ready)",
+    "fontBad":"{n} fonts: <b style=\"color:var(--danger)\">{bad}</b> not ready (online fonts need a connection):<br>{list}",
+    "fontAllOk":"Font check: all {n} ready ✓",
+    "texBrush":"Brushed gold",
+    "texTwill":"Dark twill",
+    "texStone":"Stone noise",
+    "rangeTitle":"Drag to adjust · double-click resets to {v}",
+    "badgeT":"T",
+    "badgeI":"I",
+    "emptyText":"(empty text)",
+    "noIcon":"No icon chosen",
+    "showHide":"Show / hide",
+    "editTwice":"Double-click to edit text",
+    "noUndo":"Nothing to undo",
+    "savedAt":"Autosaved at {time}",
+    "saveFail":"Autosave failed: {err}",
+    "scriptErr":"Script error: {err}",
+    "tplApplied":"Applied “{name}”",
+    "exportFail":"Export failed",
+    "pngOk":"Exported a 512×512 PNG",
+    "exportDone":"Export finished at {time}",
+    "pngFailTaint":"Export failed: {err} (assets did not load — use “Re-fetch online assets”)",
+    "previewFail":"Export failed: {err} (the image was not imported locally — pick the asset folder again)",
+    "popupBlocked":"The browser blocked the new window",
+    "previewTitle":"preview 512×512",
+    "projName":"cover-project.json",
+    "projExported":"Project exported ({n} layers)",
+    "projImported":"Project imported ({n} layers)",
+    "projImportedV1":"Project imported ({n} layers, migrated from v1)",
+    "jsonBad":"This file is not valid JSON",
+    "verBad":"Project version mismatch (needs 1 or 2)",
+    "restoredLayers":"Restored your last edit ({n} layers)",
+    "langTitle":"Interface language",
+    "langMore":" (click to cycle, 4 languages)",
+    "stAssets":"Assets: {n} (backgrounds {bg} / plates {pl} / icons {ic} / textures {bd})",
+    "stLayersN":"Layers: {n}",
+    "title":"Civ 6 Mod Cover Maker · 512×512"},
+  fr:{"lang.zh":"简体中文",
+    "lang.en":"English",
+    "lang.fr":"Français",
+    "lang.ru":"Русский",
+    "themeDark":"Thème sombre — cliquez pour le clair",
+    "themeLight":"Thème clair — cliquez pour le sombre",
+    "themeMore":" (triple clic = suivre le système)",
+    "themeAuto":"Retour au thème système",
+    "m1":"① Calques",
+    "m1i":"Clic ou double-clic sur le canevas",
+    "addText":"+ Texte",
+    "addIcon":"+ Icône",
+    "dup":"Dupliquer",
+    "del":"Supprimer",
+    "lbStack":"Ordre",
+    "up":"Monter",
+    "down":"Descendre",
+    "top":"Au premier plan",
+    "bot":"Au dernier plan",
+    "snap":"Aimanter au centre (aligne sur les axes et bords)",
+    "hintLayers":"Le haut de la liste = le devant de l'image. Avec un calque d'icône sélectionné, tirez un coin pour le mettre à l'échelle. Double-cliquez un curseur pour le réinitialiser. Ctrl/Clic Maj sur les calques en sélectionne plusieurs, qui se déplacent ensemble ; Suppr supprime la sélection.",
+    "m2":"② Texte",
+    "m2i":"Double-clic sur le canevas pour éditer",
+    "txNone":"Le calque sélectionné n'est pas du texte. Choisissez un « T » dans la liste, ou appuyez sur « + Texte ».",
+    "lbContent":"Contenu",
+    "lbFont":"Police",
+    "lbWeight":"Graisse",
+    "lbSize":"Taille",
+    "lbTracking":"Interlettrage",
+    "lbLineH":"Interlignage %",
+    "lbColor":"Couleur",
+    "lbStyle":"Style",
+    "bold":"Gras",
+    "italic":"Italique",
+    "smallCaps":"Petites capitales",
+    "lbAlign":"Alignement",
+    "alLeft":"À gauche",
+    "alCenter":"Centre",
+    "alRight":"À droite",
+    "lbPos":"Position",
+    "center":"Centrer",
+    "lbStroke":"Contour",
+    "on":"Activé",
+    "lbShadow":"Ombre",
+    "shBlur":"Flou",
+    "shDown":"Décalage",
+    "m3":"③ Icônes",
+    "m3i":"Cliquez une vignette pour ajouter un calque",
+    "icNone":"Un calque de texte est sélectionné : cliquer une vignette crée un nouveau calque d'icône. Pour modifier une icône existante, choisissez d'abord un « I » dans la liste.",
+    "lbIconSize":"Taille",
+    "uploadIcon":"Importer une icône…",
+    "uploadBg":"Importer un fond…",
+    "uploadPlate":"Importer une plaque…",
+    "delAsset":"Retirer ce visuel de la bibliothèque",
+    "assetRemoved":"Visuel supprimé : « {name} »",
+    "assetRemovedRef":"Visuel supprimé : « {name} » — {n} référence(s) effacée(s)",
+    "tpl1":"Modèle · Couverture 1",
+    "tpl2":"Modèle · Couverture 2",
+    "undo":"Annuler",
+    "redo":"Rétablir",
+    "reset":"Réinitialiser",
+    "confirmReset":"Effacer tous les réglages et revenir au modèle initial ?",
+    "gateTitle":"Récupération des visuels en ligne",
+    "gateBody":"Les visuels sont hébergés sur <b>gitee.com/psdoc/civ6-mod-cover-maker</b> ; la première utilisation demande une connexion.<br>Ils sont ensuite en cache local (IndexedDB) et disponibles hors ligne. Les originaux ne sont jamais modifiés.",
+    "gateRetry":"Relancer la récupération",
+    "gateInit":"Préparation…",
+    "gCloseTitle":"Fermer (le téléchargement continue en arrière-plan)",
+    "gCloseAria":"Fermer le panneau de récupération",
+    "chipTitle":"Afficher à nouveau le panneau de récupération",
+    "chipFetching":"Récupération en cours · cliquez",
+    "chipReady":"Visuels prêts · infos de récupération",
+    "chipMissing":"Visuels manquants · cliquez",
+    "chipToast":"Panneau fermé — le rouvrir depuis la barre d'état en bas",
+    "ready":"Prêt",
+    "m4":"④ Fond",
+    "m4i":"9 visuels + uni/dégradé",
+    "tSolid":"Uni",
+    "tGrad":"Dégradé",
+    "tImage":"Image",
+    "lbType":"Type",
+    "gLinear":"Linéaire",
+    "gRadial":"Radial",
+    "lbAngle":"Angle",
+    "lbTwo":"Couleurs",
+    "lbScale":"Échelle %",
+    "lbOffX":"Décalage X",
+    "lbOffY":"Décalage Y",
+    "bgCenter":"Centrer le fond",
+    "bgReset":"Réinitialiser échelle et décalages",
+    "lbDim":"Assombrir %",
+    "hintDim":"L'assombrissement rend le texte lisible — comptez 35–45 % sur les modèles. Un décalage proche de 0 s'aimante au centre.",
+    "m5":"⑤ Premier plan (plaque de texte)",
+    "m5i":"6 visuels + bande/bande dégradée",
+    "tNone":"Aucun",
+    "tBar":"Bande",
+    "tGradBar":"Bande dégradée",
+    "tPlate":"Plaque",
+    "lbHeight":"Hauteur",
+    "tierLow":"Bas",
+    "tierMid":"Moyen",
+    "tierHigh":"Haut",
+    "lbEdge":"Bord",
+    "edgeBottom":"Bas",
+    "edgeTop":"Haut",
+    "fade":"Fondu en haut (évite la coupe nette)",
+    "rule":"Double filet doré au bord",
+    "hintPlate":"Les plaques sont des carrés 512×512. Les trois hauteurs recadrent le bas 512/341/170 px — sans étirement vertical.",
+    "lbAlpha":"Opacité %",
+    "m6":"⑥ Bordure",
+    "m6i":"3 largeurs · uni/dégradé/motif",
+    "lbBorder":"Bordure",
+    "enable":"Activer",
+    "bdThin":"Fin 6",
+    "bdMid":"Moyen 12",
+    "bdBold":"Épais 20",
+    "tTexture":"Motif",
+    "lbTexture":"Motif",
+    "glow":"Filet interne 1 px",
+    "hintTex":"Les motifs sont générés en interne (doré brossé / sergé foncé / bruit de pierre).",
+    "m7":"⑦ Visuels et sauvegarde",
+    "m7i":"Sauvegarde auto activée",
+    "refetch":"Relancer la récupération",
+    "clearAssets":"Vider le cache des visuels",
+    "exportJson":"Exporter le projet JSON",
+    "importJson":"Importer le projet JSON",
+    "embed":"Inclure les images importées dans l'export",
+    "fontLoading":"Chargement des polices…",
+    "exportPng":"Exporter PNG 512×512",
+    "preview":"Aperçu",
+    "zipBad":"Archive zip invalide (EOCD introuvable)",
+    "apiEmpty":"L'API n'a renvoyé aucun contenu",
+    "apiSize":"Taille invalide {a}≠{b}",
+    "zipTooBig":"assets.zip trop volumineux, aucun contenu renvoyé",
+    "zipEmpty":"assets.zip ne contient aucun visuel exploitable",
+    "zipNameBad":"Encodage des noms non reconnu dans assets.zip — récupération fichier par fichier",
+    "zipGot":"Visuels en ligne : {n} récupérés d'un seul zip",
+    "zipNo":"zip indisponible ({err}), récupération fichier par fichier…",
+    "alreadyAll":"Visuels en ligne : les {n} sont présents",
+    "pull0":"Téléchargement 0/{n}",
+    "pullN":"Téléchargement {done}/{total} ({fail} échecs)",
+    "pullNok":"Téléchargement {done}/{total}",
+    "repLine":"Visuels en ligne : {ok}/{total} récupérés, {n} en bibliothèque",
+    "repFail":" ; {n} en échec, première erreur : {err}. Des échecs répétés signalent une limite Gitee — placez les visuels dans assets.zip à la racine du dépôt pour tout récupérer en un appel.",
+    "probeZip":"Vérification de assets.zip…",
+    "readyN":"Visuels prêts : {n}",
+    "toastReady":"Visuels prêts — fonds {bg} / plaques {pl} / icônes {ic}",
+    "toastMissing":"{n} visuels manquent — utilisez « Relancer la récupération »",
+    "noneFetched":"Aucun visuel récupéré — vérifiez la connexion puis réessayez",
+    "cacheCleared":"Cache vidé — utilisez le bouton ci-dessous",
+    "cacheToast":"Cache des visuels vidé",
+    "confirmClear":"Supprimer les visuels en cache dans le navigateur ? Ils seront téléchargés à nouveau au prochain lancement.",
+    "gridEmpty":"Aucun visuel dans cette catégorie — récupération en cours…",
+    "uploaded":"Import · {name}",
+    "addedN":"{n} image(s) ajoutée(s)",
+    "cacheOffline":"Visuels issus du cache en ligne, disponibles hors connexion",
+    "restoredN":"{n} visuels restaurés depuis le cache local",
+    "cacheReadFail":"Lecture du cache local échouée : {err}",
+    "f.cn-douyin":"Douyin Sans",
+    "f.cn-serif":"Source Han Serif",
+    "f.cn-sharkfit":"Sharkfit Health",
+    "f.cn-hei":"Noto Sans SC",
+    "f.cn-maple":"Maple Mono CN",
+    "f.en-cinzel":"Cinzel (capitales romaines)",
+    "f.en-cormorant":"Cormorant SC",
+    "f.en-playfair":"Playfair Display",
+    "f.en-grotesk":"Space Grotesk",
+    "f.en-oswald":"Oswald condensé",
+    "grpCn":"Polices chinoises",
+    "grpEn":"Polices latines",
+    "notReady":" (non prête)",
+    "fontBad":"{n} polices : <b style=\"color:var(--danger)\">{bad}</b> non prêtes (les polices en ligne nécessitent une connexion) :<br>{list}",
+    "fontAllOk":"Contrôle des polices : les {n} sont prêtes ✓",
+    "texBrush":"Doré brossé",
+    "texTwill":"Sergé foncé",
+    "texStone":"Bruit de pierre",
+    "rangeTitle":"Glissez pour régler · double-clic pour revenir à {v}",
+    "badgeT":"T",
+    "badgeI":"I",
+    "emptyText":"(texte vide)",
+    "noIcon":"Aucune icône choisie",
+    "showHide":"Afficher / masquer",
+    "editTwice":"Double-clic pour éditer",
+    "noUndo":"Rien à annuler",
+    "savedAt":"Sauvegarde auto à {time}",
+    "saveFail":"Échec de la sauvegarde auto : {err}",
+    "scriptErr":"Erreur de script : {err}",
+    "tplApplied":"« {name} » appliqué",
+    "exportFail":"Export échoué",
+    "pngOk":"PNG 512×512 exporté",
+    "exportDone":"Export terminé à {time}",
+    "pngFailTaint":"Export échoué : {err} (les visuels ne se sont pas chargés — relancez la récupération)",
+    "previewFail":"Export échoué : {err} (image non importée en local — choisissez à nouveau le dossier)",
+    "popupBlocked":"Le navigateur a bloqué la nouvelle fenêtre",
+    "previewTitle":"aperçu 512×512",
+    "projName":"projet-couverture.json",
+    "projExported":"Projet exporté ({n} calques)",
+    "projImported":"Projet importé ({n} calques)",
+    "projImportedV1":"Projet importé ({n} calques, migré depuis v1)",
+    "jsonBad":"Ce fichier n'est pas un JSON valide",
+    "verBad":"Version de projet incompatible (1 ou 2 requise)",
+    "restoredLayers":"Dernière édition restaurée ({n} calques)",
+    "langTitle":"Langue de l'interface",
+    "langMore":" (cliquer pour changer, 4 langues)",
+    "stAssets":"Visuels : {n} (fonds {bg} / plaques {pl} / icônes {ic} / motifs {bd})",
+    "stLayersN":"Calques : {n}",
+    "title":"Générateur de couverture Mod Civ VI · 512×512"},
+  ru:{"lang.zh":"简体中文",
+    "lang.en":"English",
+    "lang.fr":"Français",
+    "lang.ru":"Русский",
+    "themeDark":"Тёмная тема — нажмите для светлой",
+    "themeLight":"Светлая тема — нажмите для тёмной",
+    "themeMore":" (тройной клик — системная тема)",
+    "themeAuto":"Возврат к системной теме",
+    "m1":"① Слои",
+    "m1i":"Клик или двойной клик по холсту",
+    "addText":"+ Текст",
+    "addIcon":"+ Иконка",
+    "dup":"Дублировать",
+    "del":"Удалить",
+    "lbStack":"Порядок",
+    "up":"Вверх",
+    "down":"Вниз",
+    "top":"На перед",
+    "bot":"В задний план",
+    "snap":"Притягивание к центру (выравнивание по осям и краям)",
+    "hintLayers":"Верх списка = передний план. Выбрав слой-иконку, тяните за угол для масштаба. Двойной клик по ползунку — сброс. Ctrl/Shift + клик по слоям выделяет несколько — они двигаются вместе; Del удаляет выделенные.",
+    "m2":"② Текст",
+    "m2i":"Двойной клик по холсту — правка",
+    "txNone":"Выбранный слой — не текст. Выберите «Т» в списке выше или нажмите «+ Текст».",
+    "lbContent":"Текст",
+    "lbFont":"Шрифт",
+    "lbWeight":"Насыщенность",
+    "lbSize":"Кегль",
+    "lbTracking":"Трекинг",
+    "lbLineH":"Интерлиньяж %",
+    "lbColor":"Цвет",
+    "lbStyle":"Стиль",
+    "bold":"Жирный",
+    "italic":"Курсив",
+    "smallCaps":"Капитель",
+    "lbAlign":"Выравнивание",
+    "alLeft":"слева",
+    "alCenter":"по центру",
+    "alRight":"справа",
+    "lbPos":"Позиция",
+    "center":"По центру",
+    "lbStroke":"Контур",
+    "on":"Вкл.",
+    "lbShadow":"Тень",
+    "shBlur":"Размытие",
+    "shDown":"Сдвиг вниз",
+    "m3":"③ Иконки",
+    "m3i":"Клик по миниатюре добавляет слой",
+    "icNone":"Выбран текстовый слой: клик по миниатюре создаст новый слой-иконку. Чтобы изменить существующую иконку, сначала выберите «И» в списке слоёв.",
+    "lbIconSize":"Размер",
+    "uploadIcon":"Загрузить иконку…",
+    "uploadBg":"Загрузить фон…",
+    "uploadPlate":"Загрузить плашку…",
+    "delAsset":"Удалить этот ресурс из библиотеки",
+    "assetRemoved":"Ресурс удалён: «{name}»",
+    "assetRemovedRef":"Ресурс удалён: «{name}» — ссылок очищено: {n}",
+    "tpl1":"Шаблон · Обложка 1",
+    "tpl2":"Шаблон · Обложка 2",
+    "undo":"Отменить",
+    "redo":"Повторить",
+    "reset":"Сброс",
+    "confirmReset":"Сбросить все настройки и вернуться к исходному шаблону?",
+    "gateTitle":"Загрузка ресурсов из сети",
+    "gateBody":"Ресурсы размещены на <b>gitee.com/psdoc/civ6-mod-cover-maker</b>, при первом запуске нужен интернет.<br>Затем они кэшируются в браузере (IndexedDB) и работают офлайн. Оригинал не меняется.",
+    "gateRetry":"Загрузить заново",
+    "gateInit":"Подготовка…",
+    "gCloseTitle":"Закрыть (загрузка продолжится)",
+    "gCloseAria":"Закрыть панель загрузки",
+    "chipTitle":"Снова показать панель загрузки",
+    "chipFetching":"Идёт загрузка · нажмите",
+    "chipReady":"Ресурсы готовы · сведения",
+    "chipMissing":"Ресурсы не загружены · нажмите",
+    "chipToast":"Панель закрыта — откройте снова в строке состояния",
+    "ready":"Готов",
+    "m4":"④ Фон",
+    "m4i":"9 изображений + заливка/градиент",
+    "tSolid":"Заливка",
+    "tGrad":"Градиент",
+    "tImage":"Картинка",
+    "lbType":"Тип",
+    "gLinear":"Линейный",
+    "gRadial":"Радиальный",
+    "lbAngle":"Угол",
+    "lbTwo":"Цвета",
+    "lbScale":"Масштаб %",
+    "lbOffX":"Смещение X",
+    "lbOffY":"Смещение Y",
+    "bgCenter":"Центрировать фон",
+    "bgReset":"Сброс масштаба и смещений",
+    "lbDim":"Затемнение %",
+    "hintDim":"Затемнение делает текст читаемым — в образцах 35–45%. Смещение около 0 притягивается к центру.",
+    "m5":"⑤ Передний план (плашка текста)",
+    "m5i":"6 изображений + полоса/градиент",
+    "tNone":"Нет",
+    "tBar":"Полоса",
+    "tGradBar":"Градиент",
+    "tPlate":"Плашка",
+    "lbHeight":"Высота",
+    "tierLow":"Низк.",
+    "tierMid":"Средн.",
+    "tierHigh":"Выс.",
+    "lbEdge":"Край",
+    "edgeBottom":"Снизу",
+    "edgeTop":"Сверху",
+    "fade":"Растворение сверху (без резкого края)",
+    "rule":"Двойная золотая линия по краю",
+    "hintPlate":"Плашки — квадраты 512×512. Три высоты обрезают нижние 512/341/170 пикс без растягивания.",
+    "lbAlpha":"Непрозр. %",
+    "m6":"⑥ Рамка",
+    "m6i":"3 толщины · заливка/градиент/текстура",
+    "lbBorder":"Рамка",
+    "enable":"Вкл.",
+    "bdThin":"Тонк. 6",
+    "bdMid":"Средн. 12",
+    "bdBold":"Толст. 20",
+    "tTexture":"Текстура",
+    "lbTexture":"Текстура",
+    "glow":"Внутренний блик 1 пикс",
+    "hintTex":"Текстуры создаются в приложении (золотое волокно / тёмная саржа / каменный шум).",
+    "m7":"⑦ Ресурсы и сохранения",
+    "m7i":"Автосохранение вкл.",
+    "refetch":"Загрузить заново",
+    "clearAssets":"Очистить кэш ресурсов",
+    "exportJson":"Экспорт проекта JSON",
+    "importJson":"Импорт проекта JSON",
+    "embed":"Встроить загруженные изображения в файл",
+    "fontLoading":"Загрузка шрифтов…",
+    "exportPng":"Экспорт PNG 512×512",
+    "preview":"Просмотр",
+    "zipBad":"Некорректный zip (нет EOCD)",
+    "apiEmpty":"API не вернул содержимое",
+    "apiSize":"Размер не совпадает {a}≠{b}",
+    "zipTooBig":"assets.zip слишком большой, содержимое не вернулось",
+    "zipEmpty":"в assets.zip нет подходящих ресурсов",
+    "zipNameBad":"Кодировка имён в assets.zip не распознана — загружаю файлы по одному",
+    "zipGot":"Ресурсы: {n} получено одним архивом",
+    "zipNo":"zip недоступен ({err}), загрузка по файлам…",
+    "alreadyAll":"Ресурсы: все {n} на месте",
+    "pull0":"Загрузка 0/{n}",
+    "pullN":"Загрузка {done}/{total} (ошибок: {fail})",
+    "pullNok":"Загрузка {done}/{total}",
+    "repLine":"Ресурсы: {ok}/{total} загружено, всего {n}",
+    "repFail":"; ошибок: {n}, первая: {err}. Повторные сбои — обычно лимит Gitee: положите assets.zip в корень репозитория, чтобы получить всё за один запрос.",
+    "probeZip":"Проверка assets.zip…",
+    "readyN":"Ресурсы готовы: {n}",
+    "toastReady":"Готово: фон {bg} / плашки {pl} / иконки {ic}",
+    "toastMissing":"Не загружено: {n} — нажмите «Загрузить заново»",
+    "noneFetched":"Ни один ресурс не загружен — проверьте сеть и повторите",
+    "cacheCleared":"Кэш очищен — нажмите кнопку ниже",
+    "cacheToast":"Кэш ресурсов очищен",
+    "confirmClear":"Удалить кэш ресурсов в браузере? При следующем открытии они загрузятся заново.",
+    "gridEmpty":"В этой категории пусто — идёт загрузка из репозитория…",
+    "uploaded":"Загрузка · {name}",
+    "addedN":"Добавлено изображений: {n}",
+    "cacheOffline":"Ресурсы из кэша, работают офлайн",
+    "restoredN":"Восстановлено из кэша: {n}",
+    "cacheReadFail":"Ошибка чтения кэша: {err}",
+    "f.cn-douyin":"Douyin Sans",
+    "f.cn-serif":"Source Han Serif",
+    "f.cn-sharkfit":"Sharkfit Health",
+    "f.cn-hei":"Noto Sans SC",
+    "f.cn-maple":"Maple Mono CN",
+    "f.en-cinzel":"Cinzel (рим. капит.)",
+    "f.en-cormorant":"Cormorant SC",
+    "f.en-playfair":"Playfair Display",
+    "f.en-grotesk":"Space Grotesk",
+    "f.en-oswald":"Oswald узкий",
+    "grpCn":"Китайские шрифты",
+    "grpEn":"Латинские шрифты",
+    "notReady":" (не готов)",
+    "fontBad":"Шрифтов {n}: <b style=\"color:var(--danger)\">{bad}</b> не готовы (нужен интернет):<br>{list}",
+    "fontAllOk":"Проверка шрифтов: все {n} готовы ✓",
+    "texBrush":"Золотое волокно",
+    "texTwill":"Тёмная саржа",
+    "texStone":"Каменный шум",
+    "rangeTitle":"Тяните для изменения · двойной клик вернёт {v}",
+    "badgeT":"Т",
+    "badgeI":"И",
+    "emptyText":"(пустой текст)",
+    "noIcon":"Иконка не выбрана",
+    "showHide":"Показать / скрыть",
+    "editTwice":"Двойной клик — правка текста",
+    "noUndo":"Нечего отменять",
+    "savedAt":"Автосохранение {time}",
+    "saveFail":"Автосохранение не удалось: {err}",
+    "scriptErr":"Ошибка скрипта: {err}",
+    "tplApplied":"Применён «{name}»",
+    "exportFail":"Экспорт не удался",
+    "pngOk":"Экспортирован PNG 512×512",
+    "exportDone":"Экспорт завершён {time}",
+    "pngFailTaint":"Ошибка экспорта: {err} (ресурсы не загрузились — нажмите «Загрузить заново»)",
+    "previewFail":"Ошибка: {err} (изображение не локальное — выберите папку ресурсов заново)",
+    "popupBlocked":"Браузер заблокировал новое окно",
+    "previewTitle":"предпросмотр 512×512",
+    "projName":"проект-обложки.json",
+    "projExported":"Проект экспортирован (слоёв: {n})",
+    "projImported":"Проект импортирован (слоёв: {n})",
+    "projImportedV1":"Проект импортирован (слоёв: {n}, миграция с v1)",
+    "jsonBad":"Это не корректный JSON",
+    "verBad":"Неверная версия проекта (нужна 1 или 2)",
+    "restoredLayers":"Восстановлено последнее редактирование (слоёв: {n})",
+    "langTitle":"Язык интерфейса",
+    "langMore":" (нажмите для смены, 4 языка)",
+    "stAssets":"Ресурсы: {n} (фонов {bg} / плашек {pl} / иконок {ic} / текстур {bd})",
+    "stLayersN":"Слоёв: {n}",
+    "title":"Создатель обложек модов Civ VI · 512×512"}
+};
+const LANGS=['zh','en','fr','ru'],LANG_KEY='civ6cover:lang';
+/* 按 navigator.languages 顺序找第一个命中的语言；zh 优先于其它前缀 */
+function detectLang(){ const list=navigator.languages||[navigator.language||'zh'];
+  for(let i=0;i<list.length;i++){ const q=String(list[i]||'').toLowerCase().replace('_','-');
+    if(q==='zh'||q.indexOf('zh-')===0)return 'zh';
+    if(q==='fr'||q.indexOf('fr-')===0)return 'fr';
+    if(q==='ru'||q.indexOf('ru-')===0)return 'ru';
+    if(q==='en'||q.indexOf('en-')===0)return 'en' }
+  return 'en' }   /* 浏览器语言都不在支持列表里时走英文 */
+function normLang(l){ return LANGS.indexOf(l)>=0?l:'zh' }
+let LANG=normLang(document.documentElement.getAttribute('data-lang')||detectLang());
+function t(k,p){ const L=I18N[LANG]||I18N.zh; let s=(k in L)?L[k]:I18N.zh[k];
+  if(s===undefined)return k; if(p)s=s.replace(/\{(\w+)\}/g,(m,a)=>p[a]===undefined?m:String(p[a]));
+  return s }
+function escH(s){ return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])) }
+/* 动态文案：记下最后一次调用的 key+参数，切语言时可重放 */
+const LAST={};
+function say(slot,k,p){ LAST[slot]=[k,p]; return t(k,p) }
+const LTIME={zh:'zh-CN',en:'en-GB',fr:'fr-FR',ru:'ru-RU'};
+const LSEP={zh:'、',en:', ',fr:', ',ru:', '};
+
+/* ---- 语言切换：静态节点用 data-i18n 钩子，动态节点由主脚本的 __langHook 重建 ---- */
+const LOCALE={zh:'zh-CN',en:'en',fr:'fr-FR',ru:'ru-RU'};
+const ATTR={text:'data-i18n',html:'data-i18n-html',title:'data-i18n-title',aria:'data-i18n-aria'};
+function applyStatic(){
+  document.documentElement.lang=LOCALE[LANG];
+  document.documentElement.setAttribute('data-lang',LANG);
+  document.title=t('title');
+  for(const kind in ATTR){ const sel='['+ATTR[kind]+']';
+    document.querySelectorAll(sel).forEach(el=>{ const k=el.getAttribute(ATTR[kind]);
+      const s=t(k); if(s===k)return;
+      if(kind==='title')el.setAttribute('title',s);
+      else if(kind==='aria')el.setAttribute('aria-label',s);
+      else if(kind==='html')el.innerHTML=s;
+      else el.textContent=s }); }
+}
+function setLang(l){ const v=normLang(l);
+  if(v!==LANG){ LANG=v; try{ localStorage.setItem(LANG_KEY,v) }catch(e){} }
+  applyStatic();
+  if(window.__langHook)window.__langHook(LANG) }
+</script>
+</head>
+<body>
+<div id="app">
+
+  <!-- ===================== 左栏：图层 / 文字 / 图标 ===================== -->
+  <aside id="panelL">
+    <header><div class="brand">
+        <svg class="logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
+          <path d="M16 2.2L27.9 9.1L27.9 22.9L16 29.8L4.1 22.9L4.1 9.1Z" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/>
+          <path d="M16 8.6L21.5 11.3L16 14L10.5 11.3Z" fill="currentColor"/>
+          <path d="M10.5 14.9L16 17.6L21.5 14.9M10.5 18.3L16 21L21.5 18.3" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" stroke-linecap="round" opacity=".55"/>
+        </svg>
+        <h1>Civ6Mod<em>Cover</em>Maker</h1>
+      </div>
+      <div class="hdctl">
+        <button id="btnLang" type="button" class="icon langbtn" data-i18n-title="langTitle" data-i18n-aria="langTitle" aria-label="Interface language"><svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><circle cx="8" cy="8" r="6.2"/><ellipse cx="8" cy="8" rx="2.8" ry="6.2"/><path d="M1.9 6.1h12.2M1.9 9.9h12.2"/></svg><b id="langAbbr">ZH</b></button>
+        <button id="btnTheme" type="button" class="icon" data-i18n-title="themeDark" title="切换浅色 / 深色界面">◐</button>
+      </div></header>
+    <div class="pscroll">
+
+      <div class="mod" data-open="1"><h2><span data-i18n="m1">① 图层</span> <i data-i18n="m1i">点选或双击画布</i></h2><div class="modb">
+        <div class="row"><button id="addText" class="pri" data-i18n="addText">＋ 文字</button><button id="addIcon" class="pri" data-i18n="addIcon">＋ 图标</button>
+          <button id="dupLayer" data-i18n="dup">复制</button><button id="delLayer" data-i18n="del">删除</button></div>
+        <div id="layerList"></div>
+        <div class="row"><label data-i18n="lbStack">叠放</label><button id="lyUp" data-i18n="up">上移</button><button id="lyDown" data-i18n="down">下移</button>
+          <button id="lyTop" data-i18n="top">置顶</button><button id="lyBot" data-i18n="bot">置底</button></div>
+        <label class="chk"><input type="checkbox" id="snapOn"><span data-i18n="snap">居中吸附（拖动时自动对齐中线 / 边线）</span></label>
+        <p class="hint" data-i18n="hintLayers">列表自上而下＝画面自前而后。选中图标图层后可拖四角小方块等比改大小。滑块双击＝复位。Ctrl / Shift 点图层可多选，多选后一起拖动；Del 删除选中的图层。</p>
+      </div></div>
+
+      <div class="mod" data-open="1"><h2><span data-i18n="m2">② 文字</span> <i data-i18n="m2i">双击画布可改字</i></h2><div class="modb">
+        <p class="hint" id="txNone" data-i18n="txNone">当前选中的不是文字图层。在上方图层列表点一个「文」，或按「＋ 文字」新建。</p>
+        <div id="txBody" class="hide" style="display:flex;flex-direction:column;gap:9px">
+          <div class="row"><label data-i18n="lbContent">内容</label><textarea id="txText"></textarea></div>
+          <div class="row"><label data-i18n="lbFont">字体</label><select id="txFont"></select></div>
+          <!-- 字重只对可变轴（weight 写成 "min max"）的字体出现，静态字体这行整体隐藏 -->
+          <div class="row hide" id="txWRow"><label data-i18n="lbWeight">字重</label><input type="range" id="txW" min="100" max="900" step="5" data-def="400"><input type="number" id="txWN" min="100" max="900" step="5"></div>
+          <div class="row"><label data-i18n="lbSize">字号</label><input type="range" id="txSize" min="8" max="200" step="1" data-def="32"><input type="number" id="txSizeN" min="8" max="200"></div>
+          <div class="row"><label data-i18n="lbTracking">字间距</label><input type="range" id="txLs" min="-8" max="60" step="0.5" data-def="0"><input type="number" id="txLsN" min="-8" max="60" step="0.5"></div>
+          <div class="row"><label data-i18n="lbLineH">行高 %</label><input type="range" id="txLh" min="90" max="220" step="1" data-def="120"><input type="number" id="txLhN" min="90" max="220"></div>
+          <div class="row"><label data-i18n="lbColor">颜色</label><input type="color" id="txColor"><div class="pal" id="txPal"></div></div>
+          <div class="row wrap"><label data-i18n="lbStyle">样式</label>
+            <label class="chk"><input type="checkbox" id="txBold"><span data-i18n="bold">粗体</span></label>
+            <label class="chk"><input type="checkbox" id="txItalic"><span data-i18n="italic">斜体</span></label>
+            <label class="chk"><input type="checkbox" id="txCaps"><span data-i18n="smallCaps">小型大写</span></label>
+          </div>
+          <div class="row"><label data-i18n="lbAlign">对齐</label>
+            <div class="tabs" id="txAlign"></div></div>
+          <div class="row"><label data-i18n="lbPos">位置</label><input type="number" id="txX" min="-400" max="912" title="X"><input type="number" id="txY" min="-400" max="912" title="Y">
+            <button id="txCx" data-i18n="center">居中</button></div>
+          <div class="sep"></div>
+          <div class="row wrap"><label data-i18n="lbStroke">描边</label>
+            <label class="chk"><input type="checkbox" id="stOn"><span data-i18n="on">开</span></label>
+            <input type="range" id="stW" min="1" max="12" step="0.5" data-def="2"><input type="color" id="stC"></div>
+          <div class="row wrap"><label data-i18n="lbShadow">投影</label>
+            <label class="chk"><input type="checkbox" id="shOn"><span data-i18n="on">开</span></label>
+            <input type="range" id="shB" min="0" max="24" step="1" data-def="6" data-i18n-title="shBlur" title="模糊">
+            <input type="range" id="shD" min="0" max="12" step="1" data-def="2" data-i18n-title="shDown" title="下移">
+            <input type="color" id="shC"></div>
+        </div>
+      </div></div>
+
+      <div class="mod" data-open="1"><h2><span data-i18n="m3">③ 图标</span> <i data-i18n="m3i">点缩略图即新增一层</i></h2><div class="modb">
+        <div class="grid" id="icGrid"></div>
+        <!-- 上传按钮常驻：不选中图标层时也能往库里加图，选中后点缩略图即可换图 -->
+        <div class="row"><button id="icUpload" class="pri" data-i18n="uploadIcon">上传自定义图标…</button></div>
+        <p class="hint" id="icNone" data-i18n="icNone">当前选中的是文字图层：点上面的图标缩略图会新建一个图标图层。若要改已有图标，先在图层列表点一个「图」。</p>
+        <div id="icBody" class="hide" style="display:flex;flex-direction:column;gap:9px">
+          <div class="row"><label data-i18n="lbIconSize">大小</label><input type="range" id="icSize" min="16" max="900" step="1" data-def="180"><input type="number" id="icSizeN" min="16" max="900"></div>
+          <div class="row"><label data-i18n="lbPos">位置</label><input type="number" id="icX" min="-400" max="912"><input type="number" id="icY" min="-400" max="912">
+            <button id="icCx" data-i18n="center">居中</button></div>
+        </div>
+      </div></div>
+
+    </div>
+  </aside>
+
+  <!-- ===================== 中间：画布 ===================== -->
+  <section id="stage">
+    <div id="stageBar">
+      <button data-tpl="0" class="pri" data-i18n="tpl1">模板 · 封面 1</button>
+      <button data-tpl="1" class="pri" data-i18n="tpl2">模板 · 封面 2</button>
+      <span style="flex:1"></span>
+      <button id="zOut">－</button><button id="zLbl" style="min-width:48px">100%</button><button id="zIn">＋</button>
+      <button id="btnUndo" data-i18n="undo">撤销</button><button id="btnRedo" data-i18n="redo">重做</button>
+      <button id="btnNew" data-i18n="reset">清空重来</button>
+    </div>
+    <div id="canvasArea">
+      <div id="canvasBox">
+        <canvas id="cv" width="512" height="512"></canvas>
+        <div id="multiBox" aria-hidden="true"></div>
+        <div id="selBox">
+          <div class="hd" data-h="nw"></div><div class="hd" data-h="ne"></div>
+          <div class="hd" data-h="sw"></div><div class="hd" data-h="se"></div>
+        </div>
+        <div id="guideV"></div><div id="guideH"></div>
+        <textarea id="textEditor" spellcheck="false"></textarea>
+        <div id="gate">
+          <div class="gwrap">
+            <button id="gClose" type="button" data-i18n-title="gCloseTitle" data-i18n-aria="gCloseAria" title="关闭（拉取仍在后台继续）" aria-label="关闭素材拉取窗口">×</button>
+            <h3 data-i18n="gateTitle">正在拉取在线素材</h3>
+            <p class="g" id="gateBody" data-i18n-html="gateBody">素材托管在 <b>gitee.com/psdoc/civ6-mod-cover-maker</b>，首次使用需联网。<br>拉取后会缓存在浏览器本地（IndexedDB），之后断网也能用。原图只读不改。</p>
+            <div class="btns"><button id="gRetry" class="big pri hide" data-i18n="gateRetry">重新拉取在线素材</button></div>
+            <p class="g" id="gProg" data-i18n="gateInit">准备中…</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div id="statusBar">
+      <button id="gateChip" type="button" class="hide" data-i18n="chipFetching" data-i18n-title="chipTitle" title="重新显示素材拉取窗口">素材拉取中 · 点击查看</button>
+      <span id="stAssets"></span>
+      <span style="flex:1"></span>
+      <span id="stLayersWrap"></span><span id="stMsg" data-i18n="ready">就绪</span>
+    </div>
+  </section>
+
+  <!-- ===================== 右栏：背景 / 前景 / 边框 / 素材与存档 ===================== -->
+  <aside id="panelR">
+    <div class="pscroll">
+
+      <div class="mod" data-open="1"><h2><span data-i18n="m4">④ 背景</span> <i data-i18n="m4i">9 张素材 + 纯色/渐变</i></h2><div class="modb">
+        <div class="tabs" id="bgTabs"></div>
+        <div id="bgSolid" class="row hide"><label data-i18n="lbColor">颜色</label><input type="color" id="bgColor"><div class="pal" id="bgPal"></div></div>
+        <div id="bgGrad" class="hide" style="display:flex;flex-direction:column;gap:9px">
+          <div class="row"><label data-i18n="lbType">类型</label><div class="tabs"><button data-g="linear" id="bgGL" data-i18n="gLinear">线性</button><button data-g="radial" id="bgGR" data-i18n="gRadial">径向</button></div></div>
+          <div class="row"><label data-i18n="lbAngle">角度</label><div class="tabs" id="bgAng"></div></div>
+          <div class="row"><label data-i18n="lbTwo">两色</label><input type="color" id="bgC0"><input type="color" id="bgC1"><div class="pal" id="bgGPal"></div></div>
+        </div>
+        <div id="bgImage" class="hide" style="display:flex;flex-direction:column;gap:9px">
+          <div class="grid" id="bgGrid"></div>
+          <div class="row"><button id="bgUpload" class="pri" data-i18n="uploadBg">上传自定义背景…</button></div>
+          <div class="row"><label data-i18n="lbScale">缩放 %</label><input type="range" id="bgScale" min="100" max="400" step="1" data-def="100"><input type="number" id="bgScaleN" min="100" max="400"></div>
+          <div class="row"><label data-i18n="lbOffX">左右偏移</label><input type="range" id="bgX" min="-400" max="400" step="1" data-def="0"><input type="number" id="bgXN" min="-400" max="400"></div>
+          <div class="row"><label data-i18n="lbOffY">上下偏移</label><input type="range" id="bgY" min="-400" max="400" step="1" data-def="0"><input type="number" id="bgYN" min="-400" max="400"></div>
+          <div class="row"><button id="bgCx" data-i18n="bgCenter">背景居中</button><button id="bgReset" data-i18n="bgReset">复位缩放与偏移</button></div>
+        </div>
+        <div class="sep"></div>
+        <div class="row"><label data-i18n="lbDim">压暗 %</label><input type="range" id="bgDim" min="0" max="80" step="1" data-def="35"><input type="number" id="bgDimN" min="0" max="80"></div>
+        <p class="hint" data-i18n="hintDim">压暗是让文字读得清的关键，参考成品约 35–45%。偏移接近 0 会自动吸附居中。</p>
+      </div></div>
+
+      <div class="mod" data-open="0"><h2><span data-i18n="m5">⑤ 前景（文字底板）</span> <i data-i18n="m5i">6 张素材 + 色条/渐变条</i></h2><div class="modb">
+        <div class="tabs" id="fgTabs"></div>
+        <div class="row"><label data-i18n="lbHeight">高度</label><div class="tabs" id="fgTier"></div></div>
+        <div class="row"><label data-i18n="lbEdge">贴边</label><div class="tabs" id="fgPos"></div></div>
+        <div id="fgColor" style="display:flex;flex-direction:column;gap:9px">
+          <div class="row"><label data-i18n="lbColor">颜色</label><input type="color" id="fgC0"><input type="color" id="fgC1"><div class="pal" id="fgPal"></div></div>
+          <label class="chk"><input type="checkbox" id="fgFade"><span data-i18n="fade">上边缘渐隐（避免生硬切边）</span></label>
+          <label class="chk"><input type="checkbox" id="fgRule"><span data-i18n="rule">边缘双细金线</span></label>
+        </div>
+        <div id="fgPlate" class="hide" style="display:flex;flex-direction:column;gap:9px">
+          <div class="grid" id="fgGrid"></div>
+          <div class="row"><button id="fgUpload" class="pri" data-i18n="uploadPlate">上传自定义底板…</button></div>
+          <p class="hint" data-i18n="hintPlate">底板素材是 512×512 整幅方图，"高度"三档＝取底部 512/341/170 裁切，不做纵向拉伸。</p>
+        </div>
+        <div class="row"><label data-i18n="lbAlpha">不透明 %</label><input type="range" id="fgAlpha" min="20" max="100" step="1" data-def="100"><input type="number" id="fgAlphaN" min="20" max="100"></div>
+      </div></div>
+
+      <div class="mod" data-open="0"><h2><span data-i18n="m6">⑥ 边框</span> <i data-i18n="m6i">3 档尺寸 · 纯色/渐变/纹理</i></h2><div class="modb">
+        <div class="row wrap"><label data-i18n="lbBorder">边框</label><label class="chk"><input type="checkbox" id="bdOn"><span data-i18n="enable">启用</span></label>
+          <div class="tabs" id="bdTier" style="flex:1"></div></div>
+        <div class="tabs" id="bdTabs"></div>
+        <div id="bdColor" class="row"><label data-i18n="lbColor">颜色</label><input type="color" id="bdC0"><input type="color" id="bdC1"><div class="pal" id="bdPal"></div></div>
+        <div id="bdTex" class="row hide"><label data-i18n="lbTexture">纹理</label><select id="bdTexSel"></select></div>
+        <div class="row" id="bdAngRow"><label data-i18n="lbAngle">角度</label><input type="range" id="bdAng" min="0" max="315" step="45" data-def="135"></div>
+        <label class="chk"><input type="checkbox" id="bdGlow"><span data-i18n="glow">内侧 1px 高光线</span></label>
+        <p class="hint" data-i18n="hintTex">纹理为程序化生成（金色拉丝 / 深色斜纹 / 石质噪点）。</p>
+      </div></div>
+
+      <div class="mod" data-open="0"><h2><span data-i18n="m7">⑦ 素材与存档</span> <i data-i18n="m7i">自动保存已开启</i></h2><div class="modb">
+        <div class="row"><button id="refetch" data-i18n="refetch">重新拉取在线素材</button><button id="clearAssets" data-i18n="clearAssets">清除素材缓存</button></div>
+        <div class="sep"></div>
+        <div class="row"><button id="saveProj" data-i18n="exportJson">导出工程 JSON</button><button id="loadProj" data-i18n="importJson">导入工程 JSON</button></div>
+        <label class="chk"><input type="checkbox" id="embedCustom"><span data-i18n="embed">导出时内联自定义上传的图片</span></label>
+        <div class="sep"></div>
+        <p class="hint" id="fontReport" data-i18n="fontLoading">字体加载中…</p>
+        <p class="hint" id="assetReport"></p>
+      </div></div>
+
+    </div>
+    <footer>
+      <button id="btnPng" class="big pri" style="flex:2" data-i18n="exportPng">导出 PNG 512×512</button>
+      <button id="btnPreview" class="big" style="flex:1" data-i18n="preview">预览</button>
+    </footer>
+  </aside>
+</div>
+
+<input type="file" id="inFiles" multiple accept="image/*" class="hide">
+<input type="file" id="inJson" accept="application/json,.json" class="hide">
+<div id="toast"></div>
+
+<script>
+'use strict';
+/* ============================ 常量 ============================ */
+const W=512,H=512,LS_KEY='civ6cover:project:v2',LEGACY_KEY='civ6cover:project:v1',DBN='civ6cover',VER=2,SNAP=6;
+const $=id=>document.getElementById(id);
+const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
+const r0=v=>Math.round(v);
+const debounce=(fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn.apply(null,a),ms)}};
+const IMG_RE=/\.(png|jpe?g|webp|gif|bmp)$/i;
+
+/* ---------- 在线素材（Gitee） ----------
+   raw 地址（gitee.com/…/raw/… 与跳转的 raw.giteeusercontent.com）响应里**没有**
+   Access-Control-Allow-Origin，浏览器 fetch 必被 CORS 拦。只有 api/v5 端点回 ACAO: *。
+   冷启动优先读仓库根的 assets.zip（1~2 次接口调用），拿不到再退回逐文件 contents。 */
+const REPO='psdoc/civ6-mod-cover-maker';
+const API_BASE='https://gitee.com/api/v5/repos/'+REPO;
+const API_FILE=p=>API_BASE+'/contents/'+p.split('/').map(encodeURIComponent).join('/');
+const API_TREE=API_BASE+'/git/trees/master?recursive=1';
+const API_BLOB=sha=>API_BASE+'/git/blobs/'+sha;
+async function apiJson(u){ const r=await fetch(u); if(!r.ok)throw new Error('HTTP '+r.status); return r.json() }
+function b64ToU8(s){ const bin=atob(s.replace(/\s/g,'')),a=new Uint8Array(bin.length);
+  for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return a }
+function u8ToBlob(a,type){ return new Blob([a],{type:type||'application/octet-stream'}) }
+const imgType=p=>/\.jpe?g$/i.test(p)?'image/jpeg':'image/png';
+async function inflateRaw(a){ const ds=new DecompressionStream('deflate-raw');
+  const w=ds.writable.getWriter(); w.write(new Uint8Array(a)); w.close();
+  return new Uint8Array(await new Response(ds.readable).arrayBuffer()) }
+/* zip 文件名编码：只有通用标志位 0x800 置 1 才表示 UTF-8。
+   Windows 右键"压缩到 ZIP 文件"打出来的中文包是 GBK 且不带该标志，
+   直接按 UTF-8 解会得到一串 U+FFFD 乱码 —— 乱码路径认不出「背景 / 文字底板」目录，
+   classify() 只能全部落到默认的 icon 类，这就是三类素材混在一起的原因。
+   所以：有标志走 UTF-8；没标志先严格试 UTF-8，失败再走 GBK。 */
+function zipName(bytes,flag){
+  if(flag&0x800)return new TextDecoder('utf-8').decode(bytes);
+  try{ return new TextDecoder('utf-8',{fatal:true}).decode(bytes) }catch(e){}
+  try{ return new TextDecoder('gbk').decode(bytes) }catch(e){}
+  return new TextDecoder().decode(bytes) }
+/* 极简 zip 读取：只支持 zip32 + 存储(0)/deflate(8)，够用于我们自己打的素材包 */
+async function unzip(u8){ const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteLength);
+  let e=-1;
+  for(let i=u8.length-22;i>=0&&i>u8.length-66000;i--)
+    if(dv.getUint32(i,true)===0x06054b50){ e=i; break }
+  if(e<0)throw new Error(t('zipBad'));
+  const total=dv.getUint16(e+10,true); let off=dv.getUint32(e+16,true);
+  const out=[];
+  for(let n=0;n<total;n++){
+    if(dv.getUint32(off,true)!==0x02014b50)break;
+    const flag=dv.getUint16(off+8,true), method=dv.getUint16(off+10,true), csize=dv.getUint32(off+20,true);
+    const nl=dv.getUint16(off+28,true), el=dv.getUint16(off+30,true), cl=dv.getUint16(off+32,true);
+    const lho=dv.getUint32(off+42,true), name=zipName(u8.subarray(off+46,off+46+nl),flag);
+    const ln=dv.getUint16(lho+26,true), le=dv.getUint16(lho+28,true), start=lho+30+ln+le;
+    if(!/\/$/.test(name)&&IMG_RE.test(name)){
+      const raw=u8.slice(start,start+csize);
+      out.push({name,bytes:method===0?raw:await inflateRaw(raw)}) }
+    off+=46+nl+el+cl }
+  return out }
+async function fetchAssetBlob(p){ const j=await apiJson(API_FILE(p));
+  if(!j.content)throw new Error(t('apiEmpty'));
+  const a=b64ToU8(j.content);
+  if(j.size&&a.length!==j.size)throw new Error(t('apiSize',{a:a.length,b:j.size}));
+  return u8ToBlob(a,imgType(p)) }
+/* 返回拉到的张数；zip 不存在则返回 -1 让调用方退回逐文件。
+   解出来仍带 U+FFFD 说明文件名既不是 UTF-8 也不是 GBK（例如 Big5 / Shift-JIS），
+   这时宁可退回逐文件接口——那边的路径是接口给的，编码一定正确。 */
+async function loadAssetsFromZip(){ let tree;
+  try{ tree=await apiJson(API_TREE) }catch(e){ return -1 }
+  const ent=(tree.tree||[]).find(x=>x.path==='assets.zip'); if(!ent)return -1;
+  const j=await apiJson(API_BLOB(ent.sha));
+  if(!j.content)throw new Error(t('zipTooBig'));
+  const files=await unzip(b64ToU8(j.content));
+  if(files.some(f=>f.name.indexOf('\uFFFD')>=0))throw new Error(t('zipNameBad'));
+  let ok=0;
+  for(const f of files){ const p=f.name.replace(/^assets[\/\\]/,'');
+    if(!IMG_RE.test(p))continue;
+    if(await addAsset(u8ToBlob(f.bytes,imgType(p)),p))ok++ }
+  if(!ok)throw new Error(t('zipEmpty'));
+  return ok }
+const MANIFEST={
+  bg:['背景/BG_1.jpg','背景/BG_2.jpg','背景/BG_3.jpg','背景/BG_4.jpg','背景/BG_5.jpg',
+      '背景/BG_6.jpg','背景/BG_7.jpg','背景/BG_8.jpg','背景/BG_9.jpg'],
+  plate:['文字底板/1.png','文字底板/2.png','文字底板/3.png','文字底板/4.png','文字底板/5.png','文字底板/6.png'],
+  icon:['图标/Districts_Suguba_Commercial_Visible.png','图标/GovernorSelected_Ambassador.png',
+        '图标/GovernorSelected_Builder.png','图标/GovernorSelected_Cardinal.png','图标/GovernorSelected_Defender.png',
+        '图标/GovernorSelected_Educator.png','图标/GovernorSelected_Merchant.png','图标/GovernorSelected_ResourceManager.png',
+        '图标/Hex_DistrictCampus.png','图标/Hex_DistrictCityCenter.png','图标/Hex_DistrictCommercial.png',
+        '图标/Hex_DistrictEncampment.png','图标/Hex_DistrictFaith.png','图标/Hex_DistrictNeighborhood.png',
+        '图标/Hex_DistrictTheater.png','图标/Music.png','图标/XP1_Agreements256.png','图标/XP2_Victories220.png']
+};
+const TOTAL_ASSETS=MANIFEST.bg.length+MANIFEST.plate.length+MANIFEST.icon.length;
+
+/* ---------- 字体 ----------
+   全部 10 款均从线上加载，不依赖本机字体：
+   中文 4 款走 chinese-fonts 计划的 npm CDN（unpkg 实测 200，且 webfont 已验证可上 canvas）；
+   思源黑体在 @chinese-fonts 下无包，改用 Google Noto Sans SC（思源黑体的 Google 版）的
+   @fontsource-variable 包；英文 5 款同样走 @fontsource(-variable)。 */
+const CF='@chinese-fonts/';
+const FONTS=[
+  {key:'cn-douyin',lang:'cn',label:'抖音美好体',family:'Douyin Sans',css:'"Douyin Sans",sans-serif',
+   href:CF+'dymh/dist/DouyinSansBold/result.css',weight:700},
+  {key:'cn-serif',lang:'cn',label:'思源宋体',family:'Source Han Serif CN VF',css:'"Source Han Serif CN VF",serif',
+   href:CF+'syst/dist/SourceHanSerifCN/result.css',weight:'250 900'},
+  {key:'cn-sharkfit',lang:'cn',label:'鲨鱼菲特健康体',family:'YouSheShaYuFeiTeJianKangTi',css:'"YouSheShaYuFeiTeJianKangTi",sans-serif',
+   href:CF+'syftjkt/dist/优设鲨鱼菲特健康体/result.css',weight:400},
+  {key:'cn-hei',lang:'cn',label:'思源黑体（Noto）',family:'Noto Sans SC Variable',css:'"Noto Sans SC Variable",sans-serif',
+   href:'@fontsource-variable/noto-sans-sc/wght.css',weight:'100 900'},
+  {key:'cn-maple',lang:'cn',label:'Maple Mono CN',family:'Maple Mono CN',css:'"Maple Mono CN",monospace',
+   href:CF+'maple-mono-cn/dist/MapleMono-CN-Regular/result.css',weight:400},
+  {key:'en-cinzel',lang:'en',label:'Cinzel 罗马石刻大写',family:'Cinzel Variable',css:'"Cinzel Variable",serif',
+   href:'@fontsource-variable/cinzel/wght.css',weight:'400 900'},
+  {key:'en-cormorant',lang:'en',label:'Cormorant SC 小大写',family:'Cormorant SC',css:'"Cormorant SC",serif',
+   href:['@fontsource/cormorant-sc/latin-400.css','@fontsource/cormorant-sc/latin-700.css'],weight:'400/700'},
+  {key:'en-playfair',lang:'en',label:'Playfair Display',family:'Playfair Display Variable',css:'"Playfair Display Variable",serif',
+   href:'@fontsource-variable/playfair-display/wght.css',weight:'400 900'},
+  {key:'en-grotesk',lang:'en',label:'Space Grotesk 黑体',family:'Space Grotesk Variable',css:'"Space Grotesk Variable",sans-serif',
+   href:'@fontsource-variable/space-grotesk/wght.css',weight:'300 700'},
+  {key:'en-oswald',lang:'en',label:'Oswald 窄体黑体',family:'Oswald Variable',css:'"Oswald Variable",sans-serif',
+   href:'@fontsource-variable/oswald/wght.css',weight:'200 700'}
+];
+/* 换字体只改上面的数组；href 可为单个 npm 路径或路径数组 */
+const FMAP={}; FONTS.forEach(f=>FMAP[f.key]=f);
+/* 旧存档的字体键映射到 v2 的键，避免升级后标题悄悄换字 */
+const LEGACY_FONT={'cn-song':'cn-serif','cn-kai':'cn-hei','cn-li':'cn-hei','cn-xbs':'cn-serif',
+                   'en-slab':'en-grotesk','en-fraunces':'en-oswald'};
+/* 可变字重判定：FONTS.weight 写成 "min max" 的是带 wght 轴的字体，能给滑块；
+   写成数字（抖音 700 / 鲨鱼菲特 400）或 "400/700" 这类离散档位的是静态款，只能靠合成加粗 */
+function wRange(f){ const m=/^(\d+)\s+(\d+)$/.exec(String(f&&f.weight||''));
+  return m?{min:+m[1],max:+m[2]}:null }
+const wBase=400;
+/* 统一取整到 5：和滑块 step 对齐，数字框打了 233 也回写成 235，
+   避免出现"状态 233 / 滑块停在 235"这种两边不一致 */
+function wNorm(f,v){ const r=wRange(f); if(!r)return wBase;
+  let n=(v===undefined||v===null||v==='')?wBase:+v; if(!isFinite(n))n=wBase;
+  return clamp(Math.round(n/5)*5,r.min,r.max) }
+
+const PALETTE=['#14171c','#1b2028','#2e3745','#c8a355','#f5e1a4','#f2be38','#3a5a78','#5b3a2e','#2f4a3c','#0d0f13','#ffffff','#050505'];
+const TIER_BAR=[72,104,144],TIER_PLATE=[512,341,170],TIER_BORDER=[6,12,20];
+const TEXTURE_KINDS=[{id:'brush',nameKey:'texBrush'},{id:'twill',nameKey:'texTwill'},{id:'stone',nameKey:'texStone'}];
+
+function TEXTDEF(){ return {type:'text',id:'',text:'',x:256,y:256,size:32,color:'#ffffff',fontKey:'en-cinzel',
+  weight:wBase,ls:0,bold:false,italic:false,align:'center',lh:120,smallCaps:false,visible:true,
+  stroke:{on:false,width:2,color:'#000000'},shadow:{on:true,blur:6,dy:2,color:'#000000'}} }
+function ICONDEF(){ return {type:'icon',id:'',key:null,x:256,y:200,size:180,visible:true} }
+let _seq=0; const uid=()=>'L'+(Date.now()%1e6).toString(36)+'_'+(++_seq);
+
+/* ============================ 工具 ============================ */
+function hex2rgb(h){h=(h||'#000').replace('#','');if(h.length===3)h=h.split('').map(c=>c+c).join('');
+  return [parseInt(h.slice(0,2),16)||0,parseInt(h.slice(2,4),16)||0,parseInt(h.slice(4,6),16)||0]}
+function rgba(h,a){const c=hex2rgb(h);return 'rgba('+c[0]+','+c[1]+','+c[2]+','+a+')'}
+function mulberry(seed){return function(){seed|=0;seed=seed+0x6D2B79F5|0;let t=Math.imul(seed^seed>>>15,1|seed);
+  t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function toast(m){const el=$('toast');el.textContent=m;el.classList.add('show');clearTimeout(toast._t);
+  toast._t=setTimeout(()=>el.classList.remove('show'),2600)}
+function msg(k,p){ $('stMsg').textContent=say('msg',k,p) }
+function prog(k,p){ $('gProg').textContent=say('prog',k,p) }
+function report(k,p){ $('assetReport').textContent=say('report',k,p) }
+/* 拉取素材窗口：可手动关闭，关闭后在状态条留一个重新打开的入口 */
+let gateDismissed=false;
+function gateSet(show){
+  if(show){ syncGateChip();
+    if(gateDismissed){ $('gate').classList.add('hide'); $('gateChip').classList.remove('hide') }
+            else { $('gate').classList.remove('hide'); $('gateChip').classList.add('hide') } }
+  else { gateDismissed=false; $('gate').classList.add('hide'); $('gateChip').classList.add('hide');
+    LAST.chip=gateChipKey() } }
+function gateChipKey(){ return haveAllRemote()?'chipReady':(libCount()?'chipFetching':'chipMissing') }
+function gateClose(){ gateDismissed=true; $('gate').classList.add('hide'); syncGateChip();
+  $('gateChip').classList.remove('hide'); toast(t('chipToast')) }
+function syncGateChip(){ const k=LAST.chip||gateChipKey(); LAST.chip=k; $('gateChip').textContent=t(k) }
+
+/* 主题：跟随系统 / 手动切换，记录到 localStorage */
+const THEME_KEY='civ6cover:theme';
+function themeEffective(){ const t=document.documentElement.getAttribute('data-theme');
+  if(t==='light'||t==='dark')return t;
+  return (window.matchMedia&&matchMedia('(prefers-color-scheme: light)').matches)?'light':'dark' }
+function applyTheme(t){ if(t==='auto'){ document.documentElement.removeAttribute('data-theme');
+    try{ localStorage.removeItem(THEME_KEY) }catch(e){} }
+  else { document.documentElement.setAttribute('data-theme',t);
+    try{ localStorage.setItem(THEME_KEY,t) }catch(e){} }
+  syncThemeBtn() }
+function syncThemeBtn(){ const b=$('btnTheme'); if(!b)return; const dark=themeEffective()==='dark';
+  b.textContent=dark?'◐':'◑';
+  b.title=t(dark?'themeDark':'themeLight')+t('themeMore') }
+let themeClicks=0,themeTimer=null;
+function cycleTheme(){ const next=themeEffective()==='dark'?'light':'dark';
+  applyTheme(next); clearTimeout(themeTimer); themeTimer=setTimeout(()=>{themeClicks=0},700);
+  if(++themeClicks>=3){ themeClicks=0; applyTheme('auto'); toast(t('themeAuto')) } }
+function slug(s){const a=(s||'').replace(/[^\x20-\x7e]/g,'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-+|-+$/g,'');
+  return (a||'civ6-cover').slice(0,48).toLowerCase()}
+
+/* ============================ IndexedDB ============================ */
+let _db=null;
+function openDB(){ if(_db)return _db;
+  _db=new Promise((res,rej)=>{ const rq=indexedDB.open(DBN,1);
+    rq.onupgradeneeded=e=>{const d=e.target.result;
+      if(!d.objectStoreNames.contains('assets'))d.createObjectStore('assets');
+      if(!d.objectStoreNames.contains('kv'))d.createObjectStore('kv')};
+    rq.onsuccess=()=>res(rq.result); rq.onerror=()=>rej(rq.error); rq.onblocked=()=>rej(new Error('idb blocked'))});
+  return _db }
+function idb(store,mode,fn){ return openDB().then(db=>new Promise((res,rej)=>{
+  const t=db.transaction(store,mode); const rq=fn(t.objectStore(store));
+  t.oncomplete=()=>res(rq?rq.result:undefined); t.onerror=()=>rej(t.error); t.onabort=()=>rej(t.error)})) }
+const idbPut=(k,v)=>idb('assets','readwrite',s=>s.put(v,k));
+const idbAll=()=>idb('assets','readonly',s=>s.getAll());
+const idbDel=k=>idb('assets','readwrite',s=>s.delete(k));
+const idbClear=()=>idb('assets','readwrite',s=>s.clear());
+
+/* ============================ 素材库 ============================ */
+const LIB={bg:[],plate:[],icon:[],border:[]};
+/* 自定义上传的键：图标沿用旧形 custom/<文件名>（旧缓存与旧工程能继续去重），
+   背景/底板/边框多一段类目前缀，否则 classify 会把它们全落到默认的 icon 类 */
+function customKey(kind,name){ const n=String(name||'untitled.png').replace(/[\/\\]/g,'-');
+  return kind==='icon'?'custom/'+n:'custom/'+kind+'/'+n }
+function isCustom(key){ return /^custom\//.test(String(key||'')) }
+function classify(path){ const c=/^custom\/(bg|plate|border)\//.exec(String(path||'')); if(c)return c[1];
+  if(/(^|[\/\\])背景([\/\\]|$)/.test(path))return 'bg';
+  if(/(^|[\/\\])文字底板([\/\\]|$)/.test(path))return 'plate';
+  if(/(^|[\/\\])边框([\/\\]|$)/.test(path))return 'border';
+  return 'icon' }
+function findRec(kind,key){ const a=LIB[kind]||[]; for(let i=0;i<a.length;i++)if(a[i].key===key)return a[i]; return null }
+function lookupRec(key){ const k=classify(key);
+  return findRec(k,key)||findRec('icon',key)||findRec('bg',key)||findRec('plate',key)||findRec('border',key)||null }
+function recOf(key){ if(!key)return null;
+  let r=lookupRec(key); if(r)return r;
+  /* 旧存档里的本地键「素材/背景/BG_1.png」映射到在线键：先去掉前缀，再试 .png→.jpg（只有背景是 jpg） */
+  const s=String(key).replace(/^素材[\/\\]/,'');
+  if(s!==key){ r=lookupRec(s)||lookupRec(s.replace(/\.png$/i,'.jpg')); if(r)return r }
+  return null }
+async function decode(file){ try{ return await createImageBitmap(file) }catch(e){
+  const url=URL.createObjectURL(file); try{ return await new Promise((res,rej)=>{const im=new Image();
+      im.onload=()=>res(im);im.onerror=()=>rej(new Error('decode fail'));im.src=url}) }finally{ setTimeout(()=>URL.revokeObjectURL(url),8000) } } }
+async function addAsset(file,path,silent){
+  const key=path||customKey('icon',file.name);
+  if(!IMG_RE.test(key)&&!/image\//.test(file.type||''))return false;
+  const exist=recOf(key); if(exist){ if(silent)return false; exist.file=file; return true }
+  let bmp; try{ bmp=await decode(file) }catch(e){ return false }
+  const kind=classify(key), nm=file.name||key.split(/[\/\\]/).pop();
+  const rec={key,name:nm,kind,bmp,w:bmp.width,h:bmp.height,url:URL.createObjectURL(file),file};
+  LIB[kind].push(rec);
+  if(!silent){ try{ await idbPut(key,{key,name:nm,kind,blob:file,w:rec.w,h:rec.h}) }catch(e){} }
+  return true }
+async function restoreAssets(){ const rows=await idbAll().catch(()=>[]); let n=0;
+  for(const row of (rows||[])){ if(!row||!row.blob)continue;
+    /* 旧版本缓存的是本地文件夹键，与在线清单键不同，会重复显示，直接清掉 */
+    if(/^素材[\/\\]/.test(row.key)){ idbDel(row.key).catch(()=>{}); continue }
+    /* 更早的 zip 读取按 UTF-8 硬解 GBK 文件名，键里全是 U+FFFD 乱码：
+       这类记录既分错类又匹配不上 MANIFEST，删掉让本次重新按正确路径拉取 */
+    if(row.key.indexOf('\uFFFD')>=0||String(row.name||'').indexOf('\uFFFD')>=0){ idbDel(row.key).catch(()=>{}); continue }
+    /* 分类一律以路径为准重算：早期版本把 kind 写成 icon 的缓存也能自动纠正 */
+    row.kind=classify(row.key);
+    try{ const bmp=await decode(row.blob);
+      LIB[row.kind].push({key:row.key,name:row.name,kind:row.kind,bmp,w:row.w||bmp.width,h:row.h||bmp.height,
+        url:URL.createObjectURL(row.blob),file:row.blob}); n++ }catch(e){} }
+  return n }
+function sortLib(){ for(const k in LIB) LIB[k].sort((a,b)=>a.name.localeCompare(b.name,'zh-CN',{numeric:true})) }
+function libCount(){ return LIB.bg.length+LIB.plate.length+LIB.icon.length+LIB.border.length }
+function haveAllRemote(){ const want=MANIFEST.bg.concat(MANIFEST.plate,MANIFEST.icon);
+  return want.every(p=>!!findRec(classify(p),p)) }
+
+/* ---------- 在线拉取（fetch→blob→ImageBitmap，实测不污染 canvas） ---------- */
+let fetching=false;
+async function fetchRemote(force){
+  if(fetching)return; fetching=true;
+  $('gRetry').classList.add('hide');
+  gateDismissed=false; gateSet(true);   /* 开始拉取：重新打开遮罩（除非用户已手动关掉） */
+  const todo=()=>MANIFEST.bg.concat(MANIFEST.plate,MANIFEST.icon).filter(p=>!recOf(p));
+  if(!force&&!todo().length){ fetching=false; afterLoad([]); return }
+  let fail=[],firstErr='';
+  /* 1) 先试仓库根的 assets.zip —— 一次调用拿全部，避开限流 */
+  if(force){ for(const k in LIB)LIB[k].length=0 }
+  prog('probeZip');
+  try{ const z=await loadAssetsFromZip();
+    if(z>0){ sortLib(); fetching=false; report('zipGot',{n:z});
+      afterLoad([]); return } }
+  catch(e){ firstErr=e.message; prog('zipNo',{err:firstErr}) }
+  /* 2) 退回逐文件 contents */
+  const list=todo();
+  if(!list.length){ fetching=false; report('alreadyAll',{n:libCount()}); afterLoad([]); return }
+  let done=0; prog('pull0',{n:list.length});
+  for(const p of list){
+    try{ await addAsset(await fetchAssetBlob(p),p) }
+    catch(e){ fail.push(p); if(!firstErr)firstErr=e.message }
+    done++;
+    if(done%2===0||done===list.length){
+      prog(fail.length?'pullN':'pullNok',{done:done,total:list.length,fail:fail.length});
+      await new Promise(r=>setTimeout(r,0)) } }
+  fetching=false; sortLib();
+  report('repLine',{ok:list.length-fail.length,total:list.length,n:libCount()});
+  if(fail.length) report('repFail',{n:fail.length,err:firstErr||''});
+  afterLoad(fail) }
+function afterLoad(fail){ const n=libCount();
+  refreshAllLists(); syncStateToUI(); render();
+  if(n){ gateSet(false); msg('readyN',{n:n});
+    if(!fail||!fail.length) toast(t('toastReady',{bg:LIB.bg.length,pl:LIB.plate.length,ic:LIB.icon.length}));
+    else toast(t('toastMissing',{n:fail.length}));
+    if(!state.bg.imgKey&&LIB.bg.length){ state.bg.imgKey=LIB.bg[0].key; render(); scheduleSave() } }
+  else { $('gRetry').classList.remove('hide'); prog('noneFetched'); gateSet(true) } }
+
+/* ============================ 状态 ============================ */
+function gradient(o){ return Object.assign({type:'linear',angle:135,c0:'#243447',c1:'#05070a'},o||{}) }
+/* 两份默认模板（用户从工具里导出的工程 JSON 原样内联）。
+   TPL[0] 同时是首次打开与「清空重来」的初始状态；模板按钮按序号整体替换 state。
+   缺的字段由 merge(defaults(),…) 补齐，图层再过一遍 normalizeLayer，所以这里只写有差异的值。
+   素材键都在在线清单 MANIFEST 里：素材没拉到时图层先空着，加载完自动出现。 */
+const TPL=[
+ {bg:{mode:'image',imgKey:'背景/BG_5.jpg',scale:100,x:0,y:0,dim:40},
+  fg:{type:'bar',tier:2,pos:'bottom',c0:'#2e3745',c1:'#1a1429',alpha:100,fade:false,rule:false,plateKey:null},
+  border:{on:true,tier:1,type:'solid',color:'#f2be38',grad:{type:'linear',angle:135,c0:'#f2be38',c1:'#8a6a22'},tex:'brush',glow:false},
+  snap:true,
+  layers:[
+   {type:'text',id:'tpl1a',text:'Cover Maker 2026',x:256,y:348,size:31,color:'#e8ecf2',fontKey:'en-cinzel',
+    weight:540,ls:3,align:'center',lh:120,smallCaps:true,shadow:{on:true,blur:6,dy:2,color:'#000000'}},
+   {type:'text',id:'tpl1b',text:'Civilization\ntemplate',x:256,y:424,size:52,color:'#ffffff',fontKey:'en-cinzel',
+    weight:585,ls:3,align:'center',lh:98,stroke:{on:false,width:1},shadow:{on:false}},
+   {type:'icon',id:'tpl1c',key:'图标/Hex_DistrictCommercial.png',x:256,y:172,size:247}]},
+ {bg:{mode:'image',imgKey:'背景/BG_6.jpg',scale:100,x:0,y:0,dim:45},
+  fg:{type:'plate',tier:1,pos:'bottom',c0:'#f7e6b0',c1:'#a8802c',alpha:100,fade:false,rule:true,plateKey:'文字底板/2.png'},
+  border:{on:true,tier:0,type:'grad',color:'#f2be38',grad:{type:'linear',angle:135,c0:'#f5e1a4',c1:'#8a6a22'},tex:'brush',glow:false},
+  snap:true,
+  layers:[
+   {type:'text',id:'tpl2a',text:'Civilization mod template',x:256,y:395,size:28,color:'#ffffff',fontKey:'en-cinzel',
+    weight:575,ls:3.5,align:'center',lh:120,smallCaps:true,shadow:{on:true,blur:6,dy:2,color:'#000000'}},
+   {type:'text',id:'tpl2b',text:'文明模板',x:256,y:486,size:60,color:'#0d0f13',fontKey:'cn-serif',
+    weight:750,ls:25,align:'center',lh:120,shadow:{on:false}},
+   {type:'icon',id:'tpl2c',key:'图标/XP2_Victories220.png',x:256,y:208,size:301}]}
+];
+function defaults(){ return { version:VER,
+  bg:{mode:'image',color:'#14171c',grad:gradient(),imgKey:null,scale:100,x:0,y:0,dim:35},
+  fg:{type:'bar',tier:1,pos:'bottom',c0:'#f5e1a4',c1:'#b08a3a',alpha:100,fade:true,rule:true,plateKey:null},
+  border:{on:false,tier:1,type:'solid',color:'#f2be38',grad:gradient({c0:'#f5e1a4',c1:'#8a6a22'}),tex:'brush',glow:false},
+  layers:[], sel:{id:null,ids:[]}, snap:true } }
+function isObj(o){ return !!o&&typeof o==='object'&&!Array.isArray(o) }
+function normHex(s){ return typeof s==='string'&&/^#[0-9a-fA-F]{3}$/.test(s)? '#'+s.slice(1).split('').map(c=>c+c).join('') : s }
+function merge(base,save){ if(Array.isArray(base)){ if(!base.length)return Array.isArray(save)?save.slice():[];
+    const a=Array.isArray(save)?save:[]; return base.map((v,i)=>merge(v,a[i])) }
+  if(isObj(base)){ const o={}; const s=isObj(save)?save:{};
+    for(const k in base) o[k]=merge(base[k],s[k]); return o }
+  return save===undefined?base:normHex(save) }
+function migrate(raw){ if(!isObj(raw))return raw;
+  if(Array.isArray(raw.layers)&&raw.layers.length)return raw;
+  if(!raw.texts&&!raw.icons)return raw;
+  const out=Object.assign({},raw),L=[];
+  (Array.isArray(raw.icons)?raw.icons:[]).forEach(ic=>{ if(!ic.key)return;
+    L.push(Object.assign(ICONDEF(),{key:ic.key,x:+ic.x||256,y:+ic.y||200,size:+ic.size||180,visible:ic.visible!==false})) });
+  (Array.isArray(raw.texts)?raw.texts:[]).forEach(t=>{ if(!String(t&&t.text||'').trim())return; const d=TEXTDEF();
+    L.push(Object.assign(d,t,{type:'text',stroke:Object.assign(d.stroke,isObj(t&&t.stroke)?t.stroke:{}),
+      shadow:Object.assign(d.shadow,isObj(t&&t.shadow)?t.shadow:{})})) });
+  out.layers=L; delete out.texts; delete out.icons; out.version=VER; return out }
+function normalizeLayer(o){ const t=isObj(o)&&o.type==='icon'?ICONDEF():TEXTDEF();
+  const l=merge(t,isObj(o)?o:{}); l.type=t.type;
+  if(!l.id||typeof l.id!=='string')l.id=uid();
+  l.x=clamp(+l.x||0,-400,912); l.y=clamp(+l.y||0,-400,912); l.visible=l.visible!==false;
+  if(t.type==='text'){ l.text=String(l.text==null?'':l.text);
+    l.size=clamp(+l.size||32,8,200); l.ls=clamp(+l.ls||0,-8,60); l.lh=clamp(+l.lh||120,90,220);
+    l.fontKey=LEGACY_FONT[l.fontKey]||l.fontKey;
+    if(!FMAP[l.fontKey])l.fontKey='en-cinzel';
+    /* 字重按当前字体归一：静态字体统一 400，可变字体夹到该字体的轴范围 */
+    l.weight=wNorm(FMAP[l.fontKey],l.weight);
+    if(['left','center','right'].indexOf(l.align)<0)l.align='center';
+    l.stroke.width=clamp(+l.stroke.width||2,1,12);
+    l.shadow.blur=clamp(+l.shadow.blur||0,0,24); l.shadow.dy=clamp(+l.shadow.dy||0,0,12) }
+  else l.size=clamp(+l.size||180,16,900);
+  l.x=r0(l.x); l.y=r0(l.y); return l }
+function sanitize(raw){ raw=migrate(raw);
+  const s=merge(defaults(),raw||TPL[0]); s.version=VER;
+  const seen={},src=Array.isArray(raw&&raw.layers)?raw.layers:[];
+  s.layers=src.map(o=>{ const l=normalizeLayer(o); while(seen[l.id])l.id=uid(); seen[l.id]=1; return l });
+  if(!s.layers.length)s.layers=TPL[0].layers.map(normalizeLayer);
+  s.bg.mode=['solid','grad','image'].indexOf(s.bg.mode)>=0?s.bg.mode:'image';
+  s.fg.type=['none','solid','bar','plate'].indexOf(s.fg.type)>=0?s.fg.type:'bar';
+  s.border.type=['solid','grad','texture'].indexOf(s.border.type)>=0?s.border.type:'solid';
+  s.bg.scale=clamp(+s.bg.scale||100,100,400); s.bg.dim=clamp(+s.bg.dim||0,0,80);
+  s.bg.x=clamp(+s.bg.x||0,-400,400); s.bg.y=clamp(+s.bg.y||0,-400,400);
+  /* 旧存档可能存了乱码键（zip 文件名按 UTF-8 硬解 GBK 留下的 U+FFFD），
+     按文件名重新对到在线清单上，对不上就清空让素材加载完后自动选第一张 */
+  if(typeof s.bg.imgKey==='string'&&s.bg.imgKey.indexOf('\uFFFD')>=0)
+    s.bg.imgKey=MANIFEST.bg.find(p=>p.split('/').pop()===s.bg.imgKey.split(/[\/\\]/).pop())||null;
+  if(typeof s.fg.plateKey==='string'&&s.fg.plateKey.indexOf('\uFFFD')>=0)
+    s.fg.plateKey=MANIFEST.plate.find(p=>p.split('/').pop()===s.fg.plateKey.split(/[\/\\]/).pop())||null;
+  s.fg.alpha=clamp(+s.fg.alpha||100,20,100); s.fg.tier=clamp(s.fg.tier|0,0,2); s.border.tier=clamp(s.border.tier|0,0,2);
+  normSel(s);
+  return s }
+
+let state=sanitize(null);
+let HIT=[];
+/* 多选：sel.id 是锚点（属性面板跟着它），sel.ids 是整组。存档/撤销/导入都过 normSel 校正 */
+function normSel(s){ const live=new Set(s.layers.map(l=>l.id));
+  const ids=(Array.isArray(s.sel&&s.sel.ids)?s.sel.ids:[]).filter(id=>live.has(id));
+  let id=(s.sel&&live.has(s.sel.id))?s.sel.id:(ids[0]||s.layers[0].id);
+  if(ids.indexOf(id)<0)ids.unshift(id);
+  s.sel={id:id,ids:ids} }
+function validIds(ids){ const live=new Set(state.layers.map(l=>l.id));
+  const out=(Array.isArray(ids)?ids:[]).filter(id=>live.has(id));
+  if(state.sel.id&&live.has(state.sel.id)&&out.indexOf(state.sel.id)<0)out.push(state.sel.id);
+  return out }
+function selSet(){ const S=new Set(state.sel.ids||[]); if(state.sel.id)S.add(state.sel.id); return S }
+function selLayers(){ const S=selSet(); return state.layers.filter(l=>S.has(l.id)) }
+function selLayer(){ return state.layers.find(l=>l.id===state.sel.id)||null }
+function selText(){ const l=selLayer(); return l&&l.type==='text'?l:null }
+function selIcon(){ const l=selLayer(); return l&&l.type==='icon'?l:null }
+function hitOf(l){ return boxOf(l) }
+
+let snap=null,HIST=[],FUT=[];
+function beginEdit(){ if(!snap)snap=JSON.stringify(state) }
+function endEdit(){ if(snap){HIST.push(snap);if(HIST.length>40)HIST.shift();FUT.length=0;snap=null} }
+function undo(){ snap=null; if(!HIST.length){toast(t('noUndo'));return}
+  FUT.push(JSON.stringify(state)); state=sanitize(JSON.parse(HIST.pop())); syncStateToUI(); render(); scheduleSave() }
+function redo(){ if(!FUT.length)return; HIST.push(JSON.stringify(state)); state=sanitize(JSON.parse(FUT.pop()));
+  syncStateToUI(); render(); scheduleSave() }
+
+const scheduleSave=debounce(()=>{ try{ localStorage.setItem(LS_KEY,JSON.stringify(state));
+  msg('savedAt',{time:new Date().toLocaleTimeString(LTIME[LANG])}) }catch(e){ msg('saveFail',{err:e.message}) } },500);
+function loadSaved(){ for(const k of [LS_KEY,LEGACY_KEY]){ let raw=null;
+    try{ raw=localStorage.getItem(k) }catch(e){}
+    if(raw){ try{ return sanitize(JSON.parse(raw)) }catch(e){} } } return null }
+
+/* ============================ 字体加载与自检 ============================ */
+function fontHrefs(f){ return f.href?(Array.isArray(f.href)?f.href:[f.href]):[] }
+function loadFontCss(){ FONTS.forEach(f=>fontHrefs(f).forEach((href,ix)=>{
+  if(document.querySelector('link[data-font="'+f.key+'-'+ix+'"]'))return;
+  const p=href.split('/');      // ['@scope' 或 '@scope-name', ...路径, x.css]
+  const l=document.createElement('link'); l.rel='stylesheet'; l.dataset.font=f.key+'-'+ix;
+  l.href='https://unpkg.com/'+p[0]+'/'+p.slice(1).map(encodeURIComponent).join('/');
+  document.head.appendChild(l) })) }
+async function waitFonts(){
+  FONTS.forEach(f=>{ if(!f.href)return;
+    /* 可变字体额外拉轴两端，确保滑块范围两头的字形都已就位 */
+    const r=wRange(f), spec=r?[r.min,r.max].map(w=>w+'px'):['40px','bold 40px'];
+    spec.forEach(w=>document.fonts.load(w+' "'+f.family+'"','铸剑为犁测试ABC永字八法').catch(()=>null)) });
+  for(let i=0;i<14;i++){ render(); refreshFontReport(); if(FONTS.every(fontLive))break;
+    await new Promise(r=>setTimeout(r,1500)) } }
+const _fchk={};
+/* 只用量宽法：document.fonts.check() 对不存在的字体也返回 true，不能当判据 */
+function famOK(fam){ if(_fchk[fam])return true;
+  const c=document.createElement('canvas').getContext('2d'); const s='MWQmw疆石0123';
+  const w=f=>{c.font='72px '+f;return c.measureText(s).width};
+  const mono=w('monospace'),ser=w('serif');
+  const ok=(w('"'+fam+'", monospace')!==mono)||(w('"'+fam+'", serif')!==ser);
+  if(ok)_fchk[fam]=true;      /* 只缓存肯定结果：在线字体懒加载，首帧假阴性不能钉死 */
+  return ok }
+function fontLive(f){ return famOK(f.family) }
+function refreshFontReport(){ const bad=FONTS.filter(f=>!fontLive(f)).map(fName);
+  $('fontReport').innerHTML=bad.length
+    ?t('fontBad',{n:FONTS.length,bad:bad.length,list:bad.map(escH).join(LSEP[LANG])})
+    :t('fontAllOk',{n:FONTS.length});
+  buildFontSelect() }
+
+/* ============================ 绘制 ============================ */
+const cv=$('cv'),ctx=cv.getContext('2d');
+function gradFill(g,w,h){ const ang=(g.angle||0)*Math.PI/180;
+  if(g.type==='radial'){ const gr=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.06,w/2,h/2,Math.max(w,h)*0.72);
+    gr.addColorStop(0,g.c0);gr.addColorStop(1,g.c1);return gr }
+  const cx=w/2,cy=h/2,len=Math.abs(w*Math.cos(ang))+Math.abs(h*Math.sin(ang));
+  const dx=Math.sin(ang)*len/2,dy=-Math.cos(ang)*len/2;
+  const gr=ctx.createLinearGradient(cx-dx,cy-dy,cx+dx,cy+dy);
+  gr.addColorStop(0,g.c0);gr.addColorStop(1,g.c1);return gr }
+function bgLimits(rec,scale){ const s=Math.max(W/rec.w,H/rec.h)*(clamp(scale,100,400)/100);
+  return {lx:Math.max(0,(rec.w*s-W)/2),ly:Math.max(0,(rec.h*s-H)/2)} }
+function bgGeom(rec,scale,ox,oy){ const s=Math.max(W/rec.w,H/rec.h)*(clamp(scale,100,400)/100);
+  const dw=rec.w*s,dh=rec.h*s, g=bgLimits(rec,scale);
+  return {dw,dh,x:(W-dw)/2+clamp(ox,-g.lx,g.lx),y:(H-dh)/2+clamp(oy,-g.ly,g.ly),scale:s} }
+function plateGeom(rec,tier){ const ratio=TIER_PLATE[tier]/512, sh=rec.h*ratio, sy=rec.h-sh, dh=sh*(W/rec.w);
+  return {sx:0,sy,sw:rec.w,sh,dx:0,dy:H-dh,dw:W,dh} }
+function iconBox(rec,size){ return rec.w>=rec.h?{w:size,h:size*rec.h/rec.w}:{w:size*rec.w/rec.h,h:size} }
+
+/* 背景偏移吸附：接近 0 或贴边极限时吸过去 */
+function snapBgOffset(){ const b=state.bg, rec=b.imgKey&&recOf(b.imgKey);
+  let gx=null,gy=null;
+  const lim=rec?bgLimits(rec,b.scale):{lx:0,ly:0};
+  const targetsX=[0,-lim.lx,lim.lx],targetsY=[0,-lim.ly,lim.ly];
+  const pick=(v,ts)=>{ let best=null; for(const t of ts){ const d=t-v; if(Math.abs(d)<=SNAP&&(best===null||Math.abs(d)<Math.abs(best.d)))best={d,t} } return best };
+  const bx=pick(b.x,targetsX); if(bx){ b.x=r0(bx.t); gx=bx.t!==0?null:W/2 }
+  const by=pick(b.y,targetsY); if(by){ b.y=r0(by.t); gy=by.t!==0?null:H/2 }
+  return {gx,gy} }
+
+function drawBg(){ const b=state.bg;
+  if(b.mode==='image'){ const rec=b.imgKey&&recOf(b.imgKey);
+    if(rec){ const g=bgGeom(rec,b.scale,b.x,b.y); ctx.drawImage(rec.bmp,g.x,g.y,g.dw,g.dh) }
+    else { ctx.fillStyle='#0d0f13';ctx.fillRect(0,0,W,H) } }
+  else if(b.mode==='solid'){ ctx.fillStyle=b.color;ctx.fillRect(0,0,W,H) }
+  else { ctx.fillStyle=gradFill(b.grad,W,H);ctx.fillRect(0,0,W,H) }
+  if(b.dim>0){ ctx.fillStyle='rgba(0,0,0,'+(b.dim/100)+')';ctx.fillRect(0,0,W,H) } }
+
+function rgbaTop(c,y,h){ const g=ctx.createLinearGradient(0,y,0,y+h);
+  g.addColorStop(0,rgba(c,0));g.addColorStop(.34,c);g.addColorStop(1,c);return g }
+function drawFg(){ const f=state.fg; if(f.type==='none')return;
+  ctx.save(); ctx.globalAlpha=clamp(f.alpha,20,100)/100;
+  if(f.type==='plate'){ const rec=f.plateKey&&recOf(f.plateKey);
+    if(rec){ const g=plateGeom(rec,f.tier); ctx.drawImage(rec.bmp,g.sx,g.sy,g.sw,g.sh,g.dx,g.dy,g.dw,g.dh) }
+    ctx.restore();return }
+  const h=TIER_BAR[f.tier],y=f.pos==='bottom'?H-h:0;
+  let fill;
+  if(f.type==='solid') fill=f.fade?rgbaTop(f.c0,y,h):f.c0;
+  else { const g=ctx.createLinearGradient(0,y,0,y+h);
+    if(f.fade){ g.addColorStop(0,rgba(f.c0,0));g.addColorStop(.28,f.c0);g.addColorStop(1,f.c1) }
+    else { g.addColorStop(0,f.c0);g.addColorStop(1,f.c1) } fill=g }
+  ctx.fillStyle=fill; ctx.fillRect(0,y,W,h);
+  if(f.rule){ ctx.fillStyle=rgba(f.c0,.95);
+    if(f.pos==='bottom'){ ctx.fillRect(0,y,W,1);ctx.fillRect(0,y+3,W,.6) }
+    else { ctx.fillRect(0,y+h-1,W,1);ctx.fillRect(0,y+h-4,W,.6) } }
+  ctx.restore() }
+
+/* 可变字体走数值字重（滑块直调），静态字体保留 bold 关键字（浏览器合成加粗）。
+   可变字体勾选粗体时，把实际字重抬到不低于 700，再由 wNorm 夹回该字体的轴范围。
+   style / weight 两个前缀都放在 size 之前，数值字重必须紧跟 px 前那位。 */
+function fontStr(l,size){ const f=FMAP[l.fontKey]||FMAP[0]; const r=wRange(f);
+  const lw=wNorm(f,l.weight);
+  const w=r?(l.bold?wNorm(f,Math.max(lw,700)):lw)+' ':(l.bold?'bold ':'');
+  return (l.italic?'italic ':'')+w+size+'px '+f.css }
+/* 逐字排版：推进量必须量"实际画出来的那个字形"。
+   小型大写会把小写换成大写来画，若仍按原小写字母量宽（约 0.5em 而非大写的 0.7em），
+   英文单词就会一个压一个——中文不受影响，所以看起来像"只有英文字体重叠"。 */
+function runsOf(line,l){ const out=[];
+  for(const ch of line){ let sz=l.size,draw=ch;
+    if(l.smallCaps&&/[a-z]/.test(ch)){ sz=l.size*.78; draw=ch.toUpperCase() }
+    ctx.font=fontStr(l,sz); out.push({ch:draw,sz,w:ctx.measureText(draw).width}) }
+  return out }
+function layout(l){ const lines=String(l.text||'').split('\n'),L=[]; let maxw=0;
+  for(const ln of lines){ const runs=runsOf(ln,l); let w=0;
+    for(const r of runs)w+=r.w; w+=l.ls*Math.max(0,ln.length-1);
+    L.push({runs,w}); if(w>maxw)maxw=w }
+  return {L,maxw,n:lines.length} }
+function iconRect(l){ if(!l.key)return null; const rec=recOf(l.key); if(!rec)return null;
+  const b=iconBox(rec,l.size); return {x:l.x-b.w/2,y:l.y-b.h/2,w:b.w,h:b.h} }
+function drawIconLayer(l){ const r=iconRect(l); if(!r)return null;
+  ctx.drawImage(recOf(l.key).bmp,r.x,r.y,r.w,r.h); return r }
+function textBox(l){ const lo=layout(l),lhPx=l.size*l.lh/100;
+  const top=l.y-l.size*.82,bot=l.y+(lo.n-1)*lhPx+l.size*.22;
+  const bx=l.align==='center'?l.x-lo.maxw/2:l.align==='left'?l.x:l.x-lo.maxw;
+  return {x:bx,y:top,w:lo.maxw,h:bot-top} }
+function drawTextLayer(l){ const lo=layout(l),lhPx=l.size*l.lh/100;
+  ctx.save(); ctx.textBaseline='alphabetic'; ctx.textAlign='left'; ctx.lineJoin='round';
+  if(l.shadow.on){ ctx.shadowColor=l.shadow.color; ctx.shadowBlur=l.shadow.blur; ctx.shadowOffsetY=l.shadow.dy }
+  for(let li=0;li<lo.n;li++){ const runs=lo.L[li].runs,lw=lo.L[li].w;
+    const x0=l.align==='center'?l.x-lw/2:l.align==='left'?l.x:l.x-lw;
+    const base=l.y+li*lhPx; let x=x0;
+    for(const r of runs){ ctx.font=fontStr(l,r.sz);
+      if(l.stroke.on){ ctx.lineWidth=l.stroke.width; ctx.strokeStyle=l.stroke.color; ctx.strokeText(r.ch,x,base) }
+      ctx.fillStyle=l.color; ctx.fillText(r.ch,x,base);
+      x+=r.w+l.ls } }
+  ctx.restore(); return textBox(l) }
+function boxOf(l){ if(!l||l.visible===false)return null;
+  return l.type==='text' ? (String(l.text||'').trim()?textBox(l):null) : iconRect(l) }
+function drawLayers(){ HIT=[];
+  /* 双击改字时这一层的字交给 DOM 输入框显示：canvas 上留着旧文字会和输入框叠成两层 */
+  const ed=editorOpen()?edLayer:null;
+  for(const l of state.layers){ let box=null;
+    if(l.visible) box = l.type==='text'
+      ? (String(l.text||'').trim()?(l===ed?textBox(l):drawTextLayer(l)):null) : drawIconLayer(l);
+    HIT.push(box) } }
+
+function glow(t){ ctx.save(); ctx.strokeStyle='rgba(255,255,255,.28)'; ctx.lineWidth=1;
+  ctx.strokeRect(t+.5,t+.5,W-2*t-1,H-2*t-1); ctx.restore() }
+function drawBorder(){ const b=state.border; if(!b.on)return; const t=TIER_BORDER[b.tier];
+  if(b.type==='texture'){ drawTexBorder(b,t); if(b.glow)glow(t); return }
+  ctx.save(); ctx.beginPath(); ctx.rect(0,0,W,H); ctx.rect(t,t,W-2*t,H-2*t);
+  ctx.fillStyle=b.type==='solid'?b.color:gradFill(b.grad,W,H); ctx.fill('evenodd'); ctx.restore();
+  if(b.glow)glow(t) }
+function drawTexBorder(b,t){ const base=b.color||'#c8a355', custom=b.tex.indexOf('/')>=0?recOf(b.tex):null;
+  const edges=[[0,0,W,t,'h'],[0,H-t,W,t,'h'],[0,0,t,H,'v'],[W-t,0,t,H,'v']];
+  const rnd=mulberry(20261001);
+  for(const e of edges){ const x=e[0],y=e[1],w=e[2],h=e[3],along=e[4];
+    ctx.save(); ctx.beginPath(); ctx.rect(x,y,w,h); ctx.clip();
+    ctx.fillStyle=base; ctx.fillRect(x,y,w,h);
+    if(custom){ const s=Math.max(w/custom.w,h/custom.h);
+      ctx.drawImage(custom.bmp,x+(w-custom.w*s)/2,y+(h-custom.h*s)/2,custom.w*s,custom.h*s) }
+    else if(b.tex==='brush'){ const g=along==='h'?ctx.createLinearGradient(x,y,x,y+h):ctx.createLinearGradient(x,y,x+w,y);
+      g.addColorStop(0,rgba(base,1));g.addColorStop(.45,'#fff8e0');g.addColorStop(1,rgba('#000000',.35));
+      ctx.fillStyle=g; ctx.fillRect(x,y,w,h);
+      ctx.strokeStyle='rgba(0,0,0,.16)';ctx.lineWidth=.6;
+      const n=along==='h'?h:w; for(let i=0;i<n;i+=2){ const o=i+rnd()*1.4; ctx.beginPath();
+        if(along==='h'){ctx.moveTo(x,y+o);ctx.lineTo(x+w,y+o)}else{ctx.moveTo(x+o,y);ctx.lineTo(x+o,y+h)} ctx.stroke() }
+      ctx.strokeStyle='rgba(255,255,255,.14)';
+      for(let i=0;i<n;i+=5){ const o=i+rnd()*2; ctx.beginPath();
+        if(along==='h'){ctx.moveTo(x,y+o);ctx.lineTo(x+w,y+o)}else{ctx.moveTo(x+o,y);ctx.lineTo(x+o,y+h)} ctx.stroke() } }
+    else if(b.tex==='twill'){ ctx.fillStyle=rgba('#000000',.55);ctx.fillRect(x,y,w,h);
+      ctx.strokeStyle=rgba(base,.85);ctx.lineWidth=1.6;
+      for(let i=-h;i<w+h;i+=6){ ctx.beginPath();ctx.moveTo(x+i,y);ctx.lineTo(x+i+h,y+h);ctx.stroke() }
+      ctx.strokeStyle='rgba(255,255,255,.08)';
+      for(let i=-h;i<w+h;i+=6){ ctx.beginPath();ctx.moveTo(x+i+2,y);ctx.lineTo(x+i+h+2,y+h);ctx.stroke() } }
+    else if(b.tex==='stone'){ ctx.fillStyle=rgba('#0d0f13',.75);ctx.fillRect(x,y,w,h);
+      for(let i=0;i<w*h/26;i++){ const px=x+rnd()*w,py=y+rnd()*h,s=.6+rnd()*1.8;
+        ctx.fillStyle=rnd()>.5?'rgba(255,255,255,.10)':'rgba(0,0,0,.30)'; ctx.fillRect(px,py,s,s) }
+      ctx.fillStyle=rgba(base,.30); ctx.fillRect(x,y,w,1); ctx.fillStyle=rgba(base,.14); ctx.fillRect(x,y+h-1,w,1) }
+    ctx.restore() } }
+
+function render(){ ctx.clearRect(0,0,W,H); drawBg(); drawFg(); drawLayers(); drawBorder(); updateSelBox() }
+let _raf=null; function schedule(){ if(_raf)return; _raf=requestAnimationFrame(()=>{_raf=null;render()}) }
+
+/* ============================ 选择框 / 手柄 / 辅助线 ============================ */
+let zoom=1;
+function applyZoom(){ cv.style.width=(512*zoom)+'px'; cv.style.height=(512*zoom)+'px'; updateSelBox() }
+function fitZoom(){ const a=$('canvasArea');
+  const z=clamp(Math.floor(Math.min(a.clientWidth-32,a.clientHeight-32)/512*4)/4,.5,1);
+  if(z<1){ zoom=z; applyZoom(); $('zLbl').textContent=r0(zoom*100)+'%' } }
+function curBox(){ const l=selLayer(); return l?boxOf(l):null }
+function updateSelBox(){ syncMultiBoxes(); const box=$('selBox'),l=selLayer(),r=l?boxOf(l):null;
+  const handles=[].slice.call(box.querySelectorAll('.hd')),pos=[[0,0],[1,0],[0,1],[1,1]];
+  if(!l||!l.visible||!r){ box.style.display='none'; handles.forEach(h=>h.classList.remove('show')); return }
+  box.style.display='block';
+  box.style.left=(r.x*zoom)+'px'; box.style.top=(r.y*zoom)+'px';
+  box.style.width=(r.w*zoom)+'px'; box.style.height=(r.h*zoom)+'px';
+  /* 等比缩放手柄只在单选一个图标层时出现：整组缩放语义不清 */
+  const on=l.type==='icon'&&selLayers().length===1;
+  handles.forEach((h,i)=>{ h.classList.toggle('show',on);
+    h.style.left=(r.w*zoom*pos[i][0]-5)+'px'; h.style.top=(r.h*zoom*pos[i][1]-5)+'px' }) }
+/* 多选组里非锚点的图层：虚线框挂在 DOM 覆盖层上，画进 canvas 会被一起导成 PNG */
+function syncMultiBoxes(){ const host=$('multiBox'); if(!host)return;
+  let n=0;
+  for(const l of selLayers()){ if(l.id===state.sel.id||l.visible===false)continue;
+    const r=boxOf(l); if(!r)continue;
+    let d=host.children[n]; if(!d){ d=document.createElement('div'); d.className='xbox'; host.appendChild(d) }
+    d.style.display='block'; d.style.left=(r.x*zoom)+'px'; d.style.top=(r.y*zoom)+'px';
+    d.style.width=(r.w*zoom)+'px'; d.style.height=(r.h*zoom)+'px'; n++ }
+  for(let i=n;i<host.children.length;i++)host.children[i].style.display='none' }
+function showGuide(v,h){ const gv=$('guideV'),gh=$('guideH');
+  gv.style.display=v==null?'none':'block'; if(v!=null)gv.style.left=(v*zoom)+'px';
+  gh.style.display=h==null?'none':'block'; if(h!=null)gh.style.top=(h*zoom)+'px' }
+function hideGuides(){ showGuide(null,null) }
+
+function applySnap(l,box){ if(!state.snap||!box)return {gx:null,gy:null};
+  const cx=box.x+box.w/2, cy=box.y+box.h/2;
+  let bx=null,by=null;
+  for(const v of [W/2, box.w/2, W-box.w/2]){ const d=v-cx;
+    if(Math.abs(d)<=SNAP&&(bx===null||Math.abs(d)<Math.abs(bx.d)))bx={d,v} }
+  for(const v of [H/2, box.h/2, H-box.h/2]){ const d=v-cy;
+    if(Math.abs(d)<=SNAP&&(by===null||Math.abs(d)<Math.abs(by.d)))by={d,v} }
+  let gx=null,gy=null;
+  if(bx){ l.x=r0(l.x+bx.d); gx=bx.v }
+  if(by){ l.y=r0(l.y+by.d); gy=by.v }
+  return {gx,gy} }
+
+/* ============================ 画布交互 ============================ */
+function toCanvas(e){ const b=cv.getBoundingClientRect();
+  return {x:(e.clientX-b.left)/b.width*W,y:(e.clientY-b.top)/b.height*H} }
+function hitLayer(p){ if(HIT.length!==state.layers.length) render();
+  for(let i=state.layers.length-1;i>=0;i--){ const r=HIT[i];
+    if(!r||state.layers[i].visible===false)continue;
+    if(p.x>=r.x&&p.x<=r.x+r.w&&p.y>=r.y&&p.y<=r.y+r.h)return state.layers[i] } return null }
+let drag=null;
+/* Ctrl/Cmd 点＝加/减选，Shift 点＝按叠放顺序连选，裸点＝单选（图层列表与画布共用） */
+function modMode(e){ return e.shiftKey?'range':(e.ctrlKey||e.metaKey)?'add':'' }
+cv.addEventListener('pointerdown',e=>{ if(editorOpen())return; const p=toCanvas(e);
+  beginEdit(); const l=hitLayer(p);
+  if(l){ select(l.id,modMode(e)); const S=selSet();
+    drag={mode:'move',anchor:l.id,items:state.layers.filter(x=>S.has(x.id)).map(x=>
+      ({id:x.id,x:x.x,y:x.y,dx:p.x-x.x,dy:p.y-x.y}))} }
+  else { select(null); endEdit() } });
+window.addEventListener('pointermove',e=>{ if(!drag)return; const p=toCanvas(e);
+  if(drag.mode==='resize'){ resizeTo(p); schedule(); return }
+  const g=dragGroup(p); showGuide(g.gx,g.gy); syncPosUI(); schedule() });
+window.addEventListener('pointerup',()=>{ if(!drag)return; drag=null; hideGuides(); endEdit();
+  syncStateToUI(); schedule(); scheduleSave() });
+/* 整组拖动：锚点跟手并吃吸附，其余成员按同一位移刚性跟随，免得吸附把组拉散 */
+function dragGroup(p){ const byId=id=>state.layers.find(l=>l.id===id);
+  const A=drag.items.find(t=>t.id===drag.anchor)||drag.items[0]; const al=A&&byId(A.id);
+  if(!al)return {gx:null,gy:null};
+  const dx=r0(clamp(p.x-A.dx,-400,912))-A.x, dy=r0(clamp(p.y-A.dy,-400,912))-A.y;
+  for(const t of drag.items){ const l=byId(t.id); if(!l)continue;
+    l.x=r0(clamp(t.x+dx,-400,912)); l.y=r0(clamp(t.y+dy,-400,912)) }
+  const box=boxOf(al); if(!box)return {gx:null,gy:null};
+  const before={x:al.x,y:al.y}; const g=applySnap(al,box);
+  const sdx=al.x-before.x, sdy=al.y-before.y;
+  if(sdx||sdy)for(const t of drag.items){ if(t.id===A.id)continue; const l=byId(t.id); if(!l)continue;
+    l.x=r0(clamp(l.x+sdx,-400,912)); l.y=r0(clamp(l.y+sdy,-400,912)) }
+  return {gx:g.gx,gy:g.gy} }
+
+function beginResize(handle){ const l=selLayer(); if(!l||l.type!=='icon')return false;
+  const box=boxOf(l); if(!box)return false;
+  beginEdit();
+  drag={mode:'resize',h:handle,size0:l.size,box0:{w:box.w,h:box.h},
+    ax:handle.indexOf('w')>=0?box.x+box.w:box.x,
+    ay:handle.indexOf('n')>=0?box.y+box.h:box.y};
+  return true }
+function resizeTo(p){ const l=selLayer(); if(!l||l.type!=='icon'||!drag||drag.mode!=='resize'||!drag.box0)return;
+  const s=Math.max(Math.abs(p.x-drag.ax)/drag.box0.w, Math.abs(p.y-drag.ay)/drag.box0.h);
+  l.size=clamp(r0(drag.size0*s),16,900);
+  const k=l.size/drag.size0, sw=drag.box0.w*k, sh=drag.box0.h*k;
+  const sgnx=drag.h.indexOf('w')>=0?-1:1, sgny=drag.h.indexOf('n')>=0?-1:1;
+  l.x=r0(clamp(drag.ax+sgnx*sw/2,-400,912)); l.y=r0(clamp(drag.ay+sgny*sh/2,-400,912));
+  $('icSize').value=l.size; $('icSizeN').value=l.size; syncPosUI() }
+[].forEach.call(document.querySelectorAll('.hd'),h=>{
+  h.addEventListener('pointerdown',e=>{ e.preventDefault(); e.stopPropagation(); beginResize(h.dataset.h) }) });
+
+cv.addEventListener('dblclick',e=>{ const l=hitLayer(toCanvas(e));
+  if(l&&l.type==='text'){ select(l.id); openEditor(l) } });
+cv.addEventListener('wheel',e=>{ const l=selLayer(); if(!l||l.type!=='icon'||!l.key)return; e.preventDefault();
+  beginEdit(); l.size=clamp(r0(l.size*(e.deltaY<0?1.06:0.94)),16,900); endEdit();
+  $('icSize').value=l.size; $('icSizeN').value=l.size; schedule(); scheduleSave() },{passive:false});
+/* 焦点在输入控件里时一个键都不抢：否则在内容框按 Backspace 会连图层一起删掉 */
+function typingIn(e){ const el=e.target, tag=((el&&el.tagName)||'').toLowerCase();
+  return tag==='input'||tag==='textarea'||tag==='select'||!!(el&&el.isContentEditable) }
+window.addEventListener('keydown',e=>{ if(editorOpen()||typingIn(e))return;
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='z'){ e.preventDefault(); e.shiftKey?redo():undo(); return }
+  if((e.ctrlKey||e.metaKey)&&e.key.toLowerCase()==='y'){ e.preventDefault(); redo(); return }
+  if(e.key==='Delete'||e.key==='Backspace'){ if(!selSet().size)return; e.preventDefault(); delLayer(); return }
+  if(e.ctrlKey||e.metaKey||e.altKey)return;
+  let dx=0,dy=0; const step=e.shiftKey?10:1;
+  if(e.key==='ArrowLeft')dx=-step; else if(e.key==='ArrowRight')dx=step;
+  else if(e.key==='ArrowUp')dy=-step; else if(e.key==='ArrowDown')dy=step; else return;
+  const S=selSet(); if(!S.size)return;
+  e.preventDefault(); beginEdit();
+  for(const l of state.layers) if(S.has(l.id)){ l.x=clamp(l.x+dx,-400,912); l.y=clamp(l.y+dy,-400,912) }
+  endEdit(); syncPosUI(); schedule(); scheduleSave() });
+
+/* ---------- 双击编辑 ---------- */
+let edLayer=null;
+function editorOpen(){ return $('textEditor').style.display==='block' }
+function openEditor(l){ const r=boxOf(l); edLayer=l;
+  const ed=$('textEditor'); beginEdit();
+  ed.style.display='block'; ed.value=l.text;
+  const f=FMAP[l.fontKey]||FMAP[0];
+  ed.style.font=fontStr(l,r0(l.size*zoom));
+  ed.style.letterSpacing=(l.ls*zoom)+'px'; ed.style.color=l.color; ed.style.textAlign=l.align;
+  ed.style.lineHeight=(l.size*l.lh/100*zoom)+'px';
+  const bx=r?r.x:l.x-100, by=r?r.y:l.y-l.size;
+  ed.style.left=(bx*zoom-4)+'px'; ed.style.top=(by*zoom-4)+'px';
+  ed.style.width=Math.max(120,(r?r.w:200)*zoom+16)+'px';
+  ed.style.height=Math.max(l.size*zoom*1.4,(r?r.h:40)*zoom+16)+'px';
+  ed.focus(); ed.select();
+  ed.style.width=Math.max(ed.scrollWidth+8,120)+'px'; ed.style.height=Math.max(ed.scrollHeight+4,l.size*zoom*1.3)+'px' }
+function closeEditor(commit){ if(!editorOpen())return; const ed=$('textEditor');
+  if(commit&&edLayer&&ed.value!==edLayer.text)edLayer.text=ed.value;
+  endEdit(); ed.style.display='none'; edLayer=null; schedule(); scheduleSave() }
+$('textEditor').addEventListener('blur',()=>closeEditor(true));
+$('textEditor').addEventListener('keydown',e=>{ e.stopPropagation();
+  if(e.key==='Escape'){ e.preventDefault(); closeEditor(false) }
+  if(e.key==='Enter'&&(e.ctrlKey||e.metaKey)){ e.preventDefault(); closeEditor(true) } });
+$('textEditor').addEventListener('input',()=>{ const ed=$('textEditor');
+  ed.style.width=Math.max(60,ed.scrollWidth+6)+'px'; ed.style.height=Math.max(20,ed.scrollHeight+4)+'px' });
+
+/* ============================ 控件工厂 ============================ */
+function on(id,evt,fn){ const e=$(id); if(!e){console.warn('missing',id);return} e.addEventListener(evt,fn) }
+function val(id,v){ const e=$(id); if(!e)return; if(e.type==='checkbox')e.checked=!!v; else e.value=v }
+function edit(fn){ beginEdit(); fn(); endEdit(); syncStateToUI(); schedule(); scheduleSave() }
+function tabs(host,items,set){ host.innerHTML='';
+  items.forEach(it=>{ const b=document.createElement('button');
+    if(it.k)b.setAttribute('data-i18n',it.k); b.textContent=it.k?t(it.k):it.label; b.dataset.v=it.v;
+    b.onclick=()=>edit(()=>set(it.v)); host.appendChild(b) }) }
+function syncTabs(host,v){ [].forEach.call(host.children,b=>b.classList.toggle('on',String(b.dataset.v)===String(v))) }
+function palette(host,apply){ host.innerHTML='';
+  PALETTE.forEach(c=>{ const i=document.createElement('i'); i.style.background=c; i.title=c;
+    i.onclick=()=>edit(()=>apply(c)); host.appendChild(i) }) }
+/* 滑块双击复位：读 data-def，走正常 input/change 通路回写状态 */
+function syncRangeTitles(){ document.querySelectorAll('input[type=range]').forEach(r=>{
+  if(r.dataset.def===undefined)return; r.title=t('rangeTitle',{v:r.dataset.def}) }) }
+function wireRangeReset(){ document.querySelectorAll('input[type=range]').forEach(r=>{
+  if(r.dataset.def===undefined||r.dataset.rst)return; r.dataset.rst='1';
+  r.addEventListener('dblclick',()=>{ r.value=r.dataset.def;
+    r.dispatchEvent(new Event('input',{bubbles:true})); r.dispatchEvent(new Event('change',{bubbles:true})) }) });
+  syncRangeTitles() }
+
+/* ============================ UI 构建 ============================ */
+function fName(f){ const k='f.'+f.key, v=t(k); return v===k?(f.label||v):v }
+function buildFontSelect(){ const sel=$('txFont'),tx=selText(); sel.innerHTML='';
+  [['cn','grpCn'],['en','grpEn']].forEach(pair=>{ const og=document.createElement('optgroup'); og.label=t(pair[1]);
+    FONTS.filter(f=>f.lang===pair[0]).forEach(f=>{ const o=document.createElement('option'); o.value=f.key;
+      o.textContent=fName(f)+(fontLive(f)?'':t('notReady')); og.appendChild(o) }); sel.appendChild(og) });
+  if(tx)sel.value=tx.fontKey }
+/* 语言按钮：地球图标 + 当前语言缩写，点按按 zh→en→fr→ru 循环 */
+const LANG_ABBR={zh:'ZH',en:'EN',fr:'FR',ru:'RU'};
+function syncLangBtn(){ const b=$('btnLang'),ab=$('langAbbr'); if(!b||!ab)return;
+  ab.textContent=LANG_ABBR[LANG]||'ZH';
+  const tip=t('lang.'+LANG)+' · '+t('langTitle')+t('langMore');
+  b.title=tip; b.setAttribute('aria-label',tip) }
+function cycleLang(){ const i=LANGS.indexOf(LANG); setLang(LANGS[(i+1)%LANGS.length]) }
+function buildStaticUI(){
+  tabs($('bgTabs'),[{k:'tSolid',v:'solid'},{k:'tGrad',v:'grad'},{k:'tImage',v:'image'}],v=>state.bg.mode=v);
+  tabs($('fgTabs'),[{k:'tNone',v:'none'},{k:'tBar',v:'solid'},{k:'tGradBar',v:'bar'},{k:'tPlate',v:'plate'}],v=>state.fg.type=v);
+  tabs($('fgTier'),[{k:'tierLow',v:0},{k:'tierMid',v:1},{k:'tierHigh',v:2}],v=>state.fg.tier=+v);
+  tabs($('fgPos'),[{k:'edgeBottom',v:'bottom'},{k:'edgeTop',v:'top'}],v=>state.fg.pos=v);
+  tabs($('bdTier'),[{k:'bdThin',v:0},{k:'bdMid',v:1},{k:'bdBold',v:2}],v=>state.border.tier=+v);
+  tabs($('bdTabs'),[{k:'tSolid',v:'solid'},{k:'tGrad',v:'grad'},{k:'tTexture',v:'texture'}],v=>state.border.type=v);
+  tabs($('bgAng'),[0,45,90,135,180,225,270,315].map(a=>({label:a+'°',v:a})),v=>state.bg.grad.angle=+v);
+  const al=$('txAlign'); al.innerHTML='';
+  [['left','alLeft'],['center','alCenter'],['right','alRight']].forEach(pair=>{ const b=document.createElement('button');
+    b.setAttribute('data-i18n',pair[1]); b.textContent=t(pair[1]); b.dataset.v=pair[0];
+    b.onclick=()=>{ const t=selText(); if(t)edit(()=>t.align=pair[0]) }; al.appendChild(b) });
+  palette($('txPal'),c=>{const t=selText(); if(t)t.color=c});
+  palette($('bgPal'),c=>state.bg.color=c);
+  palette($('bgGPal'),c=>state.bg.grad.c0=c);
+  palette($('fgPal'),c=>state.fg.c0=c);
+  palette($('bdPal'),c=>{state.border.color=c;state.border.grad.c0=c});
+  const bs=$('bdTexSel'); bs.innerHTML='';
+  TEXTURE_KINDS.forEach(k=>{const o=document.createElement('option');o.value=k.id;o.setAttribute('data-i18n',k.nameKey);
+    o.textContent=t(k.nameKey);bs.appendChild(o)});
+}
+
+/* ---------- 图层列表与操作 ---------- */
+function renderLayerList(){ const host=$('layerList'); host.innerHTML=''; const S=selSet();
+  for(let i=state.layers.length-1;i>=0;i--){ const l=state.layers[i];
+    const d=document.createElement('div');
+    d.className='lrow'+(l.id===state.sel.id?' on':(S.has(l.id)?' in':''))+(l.visible===false?' off':'');
+    const b=document.createElement('b'); b.textContent=t(l.type==='text'?'badgeT':'badgeI');
+    const nm=document.createElement('span'); nm.className='ln';
+    if(l.type==='text')nm.textContent=(String(l.text||'').split('\n')[0]||t('emptyText'));
+    else{ const rec=recOf(l.key); nm.textContent=rec?rec.name.replace(IMG_RE,''):t('noIcon') }
+    const eye=document.createElement('input'); eye.type='checkbox'; eye.checked=l.visible!==false; eye.title=t('showHide');
+    eye.onclick=e=>{ e.stopPropagation(); edit(()=>l.visible=eye.checked) };
+    d.onclick=e=>select(l.id,modMode(e)); d.title=nm.textContent;
+    d.appendChild(b); d.appendChild(nm); d.appendChild(eye); host.appendChild(d) }
+  updateLayerCount() }
+/* mode：''=单选，'add'=Ctrl/Cmd 增删，'range'=Shift 按叠放顺序连选 */
+function select(id,mode){
+  if(!id)state.sel={id:null,ids:[]};
+  else if(mode==='add'){ const ids=validIds(state.sel.ids), i=ids.indexOf(id);
+    if(i>=0){ ids.splice(i,1); state.sel={id:ids.length?ids[ids.length-1]:null,ids:ids} }
+    else state.sel={id:id,ids:ids.concat([id])} }
+  else if(mode==='range'){ const a=state.layers.findIndex(l=>l.id===state.sel.id), b=state.layers.findIndex(l=>l.id===id);
+    if(a<0||b<0)state.sel={id:id,ids:[id]};
+    else state.sel={id:id,ids:state.layers.slice(Math.min(a,b),Math.max(a,b)+1).map(l=>l.id)} }
+  else state.sel={id:id,ids:[id]}
+  syncStateToUI(); updateSelBox() }
+function addLayer(l){ edit(()=>{ state.layers.push(l); state.sel={id:l.id,ids:[l.id]} }) }
+function addTextLayer(){ const cur=selText();
+  const l=normalizeLayer(cur?JSON.parse(JSON.stringify(cur)):TEXTDEF());
+  l.id=uid(); l.y=clamp(l.y+24,-400,912);
+  if(!String(l.text||'').trim())l.text=t('editTwice');
+  addLayer(l) }
+function addIconLayer(key){ const cur=selIcon();
+  const base=cur?JSON.parse(JSON.stringify(cur)):ICONDEF();
+  const l=normalizeLayer(Object.assign(base,{type:'icon',key:key||null})); l.id=uid(); addLayer(l) }
+/* 增删改都按整组走：单选时行为与从前一致，多选时一起删/一起复制/整组叠放 */
+function delLayer(){ const S=selSet(); if(!S.size)return;
+  let first=-1; state.layers.forEach((l,i)=>{ if(S.has(l.id)&&first<0)first=i });
+  edit(()=>{ state.layers=state.layers.filter(l=>!S.has(l.id));
+    if(!state.layers.length)state.layers=[normalizeLayer(TEXTDEF())];
+    const j=clamp(first-1,0,state.layers.length-1);
+    state.sel={id:state.layers[j].id,ids:[state.layers[j].id]} }) }
+function dupLayer(){ const S=selSet(); if(!S.size)return;
+  const src=state.layers.filter(l=>S.has(l.id)); if(!src.length)return;
+  const copies=src.map(l=>{ const c=normalizeLayer(JSON.parse(JSON.stringify(l))); c.id=uid();
+    c.x=clamp(c.x+16,-400,912); c.y=clamp(c.y+16,-400,912); return c });
+  let at=-1; state.layers.forEach((l,i)=>{ if(S.has(l.id))at=i });
+  edit(()=>{ Array.prototype.splice.apply(state.layers,[at+1,0].concat(copies));
+    state.sel={id:copies[copies.length-1].id,ids:copies.map(c=>c.id)} }) }
+/* 整组上/下移：从行进方向的前端开始，每个选中图层依次越过第一个未选中的图层 */
+function moveLayer(d){ const S=selSet(); if(!S.size)return; const dir=d==='up'?1:-1;
+  edit(()=>{ const a=state.layers;
+    for(let k=0;k<a.length;k++){ const i=dir>0?a.length-1-k:k, j=i+dir;
+      if(j<0||j>=a.length||!S.has(a[i].id)||S.has(a[j].id))continue;
+      a.splice(j,0,a.splice(i,1)[0]) } }) }
+function zOrder(top){ const S=selSet(); if(!S.size)return;
+  edit(()=>{ const a=state.layers, keep=a.filter(l=>!S.has(l.id)), mv=a.filter(l=>S.has(l.id));
+    state.layers=top?keep.concat(mv):mv.concat(keep) }) }
+
+/* ---------- 素材网格 ---------- */
+function grid(host,kind,activeKey,pick){ const sc=host.scrollTop;
+  const sig=kind+'|'+(activeKey||'')+'|'+LIB[kind].map(r=>r.key).join(',');
+  if(host._sig===sig){ host.scrollTop=sc; return }
+  host._sig=sig; host.innerHTML='';
+  if(!LIB[kind].length){ host.innerHTML='<p class="hint">'+escH(t('gridEmpty'))+'</p>'; return }
+  LIB[kind].forEach(rec=>{ const d=document.createElement('div'); d.className='cell'+(rec.key===activeKey?' on':'');
+    const im=document.createElement('img'); im.src=rec.url; im.alt=rec.name;
+    const sp=document.createElement('span'); sp.textContent=rec.name.replace(IMG_RE,'');
+    d.appendChild(im); d.appendChild(sp); d.title=rec.name+'  '+rec.w+'×'+rec.h;
+    d.onclick=()=>edit(()=>pick(rec.key));
+    /* 自定义上传的素材才给删除角标：点它只删库，不切换选中 */
+    if(isCustom(rec.key)){ const x=document.createElement('button'); x.type='button'; x.className='rm';
+      x.textContent='×'; x.title=t('delAsset'); x.setAttribute('aria-label',t('delAsset'));
+      x.onclick=e=>{ e.stopPropagation(); removeAsset(rec) }; d.appendChild(x) }
+    host.appendChild(d) });
+  host.scrollTop=sc }
+/* 删掉一张自定义素材：库里移除 + 清 IndexedDB + 所有引用置空，引用图层的位移/样式都保留 */
+function removeAsset(rec){ if(!rec||!isCustom(rec.key)||LIB[rec.kind].indexOf(rec)<0)return;
+  let refs=0;
+  edit(()=>{ LIB[rec.kind].splice(LIB[rec.kind].indexOf(rec),1);
+    for(const l of state.layers) if(l.key===rec.key){ l.key=null; refs++ }
+    if(state.bg.imgKey===rec.key)state.bg.imgKey=(LIB.bg[0]||{}).key||null;
+    if(state.fg.plateKey===rec.key)state.fg.plateKey=(LIB.plate[0]||{}).key||null;
+    if(state.border.tex===rec.key)state.border.tex='brush' });
+  idbDel(rec.key).catch(()=>{});
+  setTimeout(()=>{ try{ URL.revokeObjectURL(rec.url) }catch(e){} },0);
+  toast(t(refs?'assetRemovedRef':'assetRemoved',{name:rec.name,n:refs}));
+  syncGateChip() }
+function refreshAllLists(){
+  grid($('bgGrid'),'bg',state.bg.imgKey,k=>{state.bg.imgKey=k;state.bg.mode='image'});
+  grid($('fgGrid'),'plate',state.fg.plateKey,k=>{state.fg.plateKey=k;state.fg.type='plate'});
+  const ic=selIcon();
+  grid($('icGrid'),'icon',ic?ic.key:null,k=>{ if(ic)ic.key=k;
+    else addLayer(normalizeLayer(Object.assign(ICONDEF(),{id:uid(),key:k}))) });
+  const bs=$('bdTexSel');
+  [].forEach.call(bs.querySelectorAll('[data-custom]'),o=>o.remove());
+  LIB.border.forEach(rec=>{const o=document.createElement('option');o.value=rec.key;
+    o.textContent=t('uploaded',{name:rec.name});o.dataset.custom='1';bs.appendChild(o)});
+  updateCounts() }
+function updateLayerCount(){ const e=$('stLayersWrap'); if(e)e.textContent=t('stLayersN',{n:state.layers.length}) }
+
+/* ============================ 状态 → UI ============================ */
+function syncStateToUI(){ renderLayerList(); syncTextUI(); syncIconUI(); syncBgUI(); syncFgUI(); syncBorderUI();
+  refreshAllLists(); updateSelBox() }
+function syncTextUI(){ const t=selText();
+  $('txNone').classList.toggle('hide',!!t); $('txBody').classList.toggle('hide',!t);
+  if(!t)return; buildFontSelect();
+  $('txText').value=t.text;
+  syncWeightUI(t);
+  val('txSize',t.size); val('txSizeN',t.size); val('txLs',t.ls); val('txLsN',t.ls);
+  val('txLh',t.lh); val('txLhN',t.lh); val('txColor',t.color);
+  val('txBold',t.bold); val('txItalic',t.italic); val('txCaps',t.smallCaps);
+  val('txX',r0(t.x)); val('txY',r0(t.y)); syncTabs($('txAlign'),t.align);
+  val('stOn',t.stroke.on); val('stW',t.stroke.width); val('stC',t.stroke.color);
+  val('shOn',t.shadow.on); val('shB',t.shadow.blur); val('shD',t.shadow.dy); val('shC',t.shadow.color) }
+/* 字重控件随字体变化：静态字体隐藏整行，可变字体把 min/max/复位值换成该字体的轴范围 */
+function syncWeightUI(ly){ const f=FMAP[ly.fontKey]||FMAP[0], r=wRange(f), row=$('txWRow');
+  if(!row)return; row.classList.toggle('hide',!r); if(!r)return;
+  const rg=$('txW'),nm=$('txWN'),def=clamp(wBase,r.min,r.max);
+  rg.min=r.min; rg.max=r.max; rg.dataset.def=def;
+  nm.min=r.min; nm.max=r.max; nm.step=rg.step;
+  val('txW',wNorm(f,ly.weight)); val('txWN',wNorm(f,ly.weight));
+  syncRangeTitles() }
+function syncIconUI(){ const c=selIcon();
+  $('icNone').classList.toggle('hide',!!c); $('icBody').classList.toggle('hide',!c);
+  if(!c)return;
+  val('icSize',c.size); val('icSizeN',c.size); val('icX',r0(c.x)); val('icY',r0(c.y)) }
+function syncPosUI(){ const l=selLayer(); if(!l)return;
+  if(l.type==='text'){ val('txX',r0(l.x)); val('txY',r0(l.y)) } else { val('icX',r0(l.x)); val('icY',r0(l.y)) } }
+function syncBgUI(){ const b=state.bg;
+  $('bgSolid').classList.toggle('hide',b.mode!=='solid'); $('bgGrad').classList.toggle('hide',b.mode!=='grad');
+  $('bgImage').classList.toggle('hide',b.mode!=='image');
+  syncTabs($('bgTabs'),b.mode); syncTabs($('bgAng'),b.grad.angle);
+  val('bgColor',b.color); val('bgC0',b.grad.c0); val('bgC1',b.grad.c1);
+  $('bgGL').classList.toggle('on',b.grad.type==='linear'); $('bgGR').classList.toggle('on',b.grad.type==='radial');
+  val('bgScale',b.scale); val('bgScaleN',b.scale);
+  val('bgX',b.x); val('bgXN',b.x); val('bgY',b.y); val('bgYN',b.y);
+  val('bgDim',b.dim); val('bgDimN',b.dim); val('snapOn',state.snap) }
+function syncFgUI(){ const f=state.fg;
+  syncTabs($('fgTabs'),f.type); syncTabs($('fgTier'),f.tier); syncTabs($('fgPos'),f.pos);
+  $('fgColor').classList.toggle('hide',f.type==='none'||f.type==='plate');
+  $('fgPlate').classList.toggle('hide',f.type!=='plate');
+  val('fgC0',f.c0); val('fgC1',f.c1); val('fgFade',f.fade); val('fgRule',f.rule);
+  val('fgAlpha',f.alpha); val('fgAlphaN',f.alpha) }
+function syncBorderUI(){ const b=state.border;
+  val('bdOn',b.on); syncTabs($('bdTier'),b.tier); syncTabs($('bdTabs'),b.type);
+  $('bdColor').classList.toggle('hide',b.type==='texture');
+  $('bdTex').classList.toggle('hide',b.type!=='texture');
+  $('bdAngRow').classList.toggle('hide',b.type!=='grad');
+  val('bdC0',b.color); val('bdC1',b.grad.c1); val('bdAng',b.grad.angle); val('bdGlow',b.glow);
+  [].forEach.call($('bdTexSel').options,o=>o.selected=(o.value===b.tex)) }
+
+/* ============================ UI → 状态 ============================ */
+function num(v){ return parseFloat(v) }
+/* 偏移滑块/数字框共用一套写入，接近 0 或贴边极限时走同一个吸附函数 */
+function setBgAxis(axis,v){ const b=state.bg; b[axis]=clamp(r0(v)||0,-400,400);
+  const g=state.snap?snapBgOffset():{gx:null,gy:null};
+  showGuide(g.gx,g.gy); syncBgUI(); schedule() }
+/* 图标 / 背景 / 底板三个上传口共用一个 file input，靠 uploadKind 决定类目与键前缀 */
+let uploadKind='icon';
+function openUpload(kind){ uploadKind=kind; $('inFiles').click() }
+async function onFilesPicked(e){ const fs=Array.prototype.slice.call(e.target.files);
+  const kind=uploadKind; e.target.value='';
+  let added=0,lastKey=null;
+  for(const f of fs){ const key=customKey(kind,f.name);
+    if(await addAsset(f,key,false)){ added++; lastKey=key } }
+  sortLib(); refreshAllLists();
+  if(!added)return;
+  if(kind==='icon'){ const rec=recOf(lastKey); if(rec)addIconLayer(rec.key) }
+  else edit(()=>{ if(kind==='bg'){ state.bg.imgKey=lastKey; state.bg.mode='image' }
+      else { state.fg.plateKey=lastKey; state.fg.type='plate' } });
+  render(); toast(t('addedN',{n:added})) }
+function wire(){
+  on('addText','click',addTextLayer); on('addIcon','click',()=>addIconLayer((LIB.icon[0]||{}).key));
+  on('dupLayer','click',dupLayer); on('delLayer','click',delLayer);
+  on('lyUp','click',()=>moveLayer('up')); on('lyDown','click',()=>moveLayer('down'));
+  on('lyTop','click',()=>zOrder(true)); on('lyBot','click',()=>zOrder(false));
+  on('snapOn','change',()=>{state.snap=$('snapOn').checked;scheduleSave()});
+  /* 文字 */
+  on('txText','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.text=$('txText').value; schedule(); scheduleSave() });
+  on('txText','change',()=>{ endEdit(); renderLayerList() });
+  on('txFont','change',()=>{ const t=selText(); if(t)edit(()=>{ t.fontKey=$('txFont').value;
+    /* 换字体后字重要按新字体的轴范围归一，否则滑块会越界 */
+    t.weight=wNorm(FMAP[t.fontKey],t.weight) }) });
+  /* 字重：范围随字体变化，写入前统一走 wNorm 归一 */
+  on('txW','input',()=>{ const t=selText(); if(!t)return;
+    const f=FMAP[t.fontKey], r=wRange(f); if(!r)return;
+    beginEdit(); t.weight=wNorm(f,num($('txW').value)); $('txWN').value=t.weight; schedule() });
+  on('txW','change',()=>{ endEdit() });
+  on('txWN','change',()=>{ const t=selText(); if(!t)return; const f=FMAP[t.fontKey];
+    if(wRange(f))edit(()=>t.weight=wNorm(f,num($('txWN').value))) });
+  [['txSize','size',8,200],['txLs','ls',-8,60],['txLh','lh',90,220]].forEach(a=>{
+    const id=a[0],k=a[1],lo=a[2],hi=a[3];
+    on(id,'input',()=>{ const t=selText(); if(!t)return; beginEdit(); t[k]=num($(id).value); $(id+'N').value=$(id).value; schedule() });
+    on(id,'change',()=>{ endEdit(); renderLayerList(); scheduleSave() });
+    on(id+'N','change',()=>{ const t=selText(); if(t)edit(()=>t[k]=clamp(num($(id+'N').value)||lo,lo,hi)) }) });
+  on('txColor','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.color=$('txColor').value; schedule() });
+  on('txColor','change',()=>{ endEdit(); scheduleSave() });
+  [['txBold','bold'],['txItalic','italic'],['txCaps','smallCaps']].forEach(a=>
+    on(a[0],'change',()=>{ const t=selText(); if(t)edit(()=>t[a[1]]=$(a[0]).checked) }));
+  on('txX','change',()=>{ const t=selText(); if(t)edit(()=>t.x=clamp(num($('txX').value)||0,-400,912)) });
+  on('txY','change',()=>{ const t=selText(); if(t)edit(()=>t.y=clamp(num($('txY').value)||0,-400,912)) });
+  on('txCx','click',()=>{ const t=selText(); if(t)edit(()=>t.x=256) });
+  on('stOn','change',()=>{ const t=selText(); if(t)edit(()=>t.stroke.on=$('stOn').checked) });
+  on('stW','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.stroke.width=num($('stW').value); schedule() });
+  on('stW','change',()=>{ endEdit(); scheduleSave() });
+  on('stC','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.stroke.color=$('stC').value; schedule() });
+  on('stC','change',()=>{ endEdit(); scheduleSave() });
+  on('shOn','change',()=>{ const t=selText(); if(t)edit(()=>t.shadow.on=$('shOn').checked) });
+  on('shB','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.shadow.blur=num($('shB').value); schedule() });
+  on('shB','change',()=>{ endEdit(); scheduleSave() });
+  on('shD','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.shadow.dy=num($('shD').value); schedule() });
+  on('shD','change',()=>{ endEdit(); scheduleSave() });
+  on('shC','input',()=>{ const t=selText(); if(!t)return; beginEdit(); t.shadow.color=$('shC').value; schedule() });
+  on('shC','change',()=>{ endEdit(); scheduleSave() });
+  /* 图标 */
+  on('icSize','input',()=>{ const c=selIcon(); if(!c)return; beginEdit(); c.size=num($('icSize').value); $('icSizeN').value=c.size; schedule() });
+  on('icSize','change',()=>{ endEdit(); scheduleSave() });
+  on('icSizeN','change',()=>{ const c=selIcon(); if(c)edit(()=>c.size=clamp(num($('icSizeN').value)||180,16,900)) });
+  on('icX','change',()=>{ const c=selIcon(); if(c)edit(()=>c.x=clamp(num($('icX').value)||0,-400,912)) });
+  on('icY','change',()=>{ const c=selIcon(); if(c)edit(()=>c.y=clamp(num($('icY').value)||0,-400,912)) });
+  on('icCx','click',()=>{ const c=selIcon(); if(c)edit(()=>{c.x=256;c.y=256}) });
+  on('icUpload','click',()=>openUpload('icon'));
+  on('bgUpload','click',()=>openUpload('bg'));
+  on('fgUpload','click',()=>openUpload('plate'));
+  /* 背景 */
+  on('bgColor','input',()=>{beginEdit();state.bg.color=$('bgColor').value;schedule()});
+  on('bgColor','change',()=>{endEdit();scheduleSave()});
+  on('bgC0','input',()=>{beginEdit();state.bg.grad.c0=$('bgC0').value;schedule()});
+  on('bgC1','input',()=>{beginEdit();state.bg.grad.c1=$('bgC1').value;schedule()});
+  $('bgC0').addEventListener('change',()=>{endEdit();scheduleSave()});
+  $('bgC1').addEventListener('change',()=>{endEdit();scheduleSave()});
+  $('bgGL').onclick=()=>edit(()=>state.bg.grad.type='linear');
+  $('bgGR').onclick=()=>edit(()=>state.bg.grad.type='radial');
+  on('bgScale','input',()=>{beginEdit();state.bg.scale=num($('bgScale').value);$('bgScaleN').value=$('bgScale').value;schedule()});
+  on('bgScale','change',()=>{endEdit();scheduleSave()});
+  on('bgScaleN','change',()=>{beginEdit();state.bg.scale=clamp(num($('bgScaleN').value)||100,100,400);endEdit();syncBgUI();schedule();scheduleSave()});
+  on('bgX','input',()=>{beginEdit();setBgOffsetX(num($('bgX').value))});
+  on('bgX','change',()=>{hideGuides();endEdit();scheduleSave()});
+  on('bgY','input',()=>{beginEdit();setBgOffsetY(num($('bgY').value))});
+  on('bgY','change',()=>{hideGuides();endEdit();scheduleSave()});
+  on('bgXN','change',()=>{beginEdit();setBgOffsetX(num($('bgXN').value)||0);endEdit();scheduleSave()});
+  on('bgYN','change',()=>{beginEdit();setBgOffsetY(num($('bgYN').value)||0);endEdit();scheduleSave()});
+  on('bgCx','click',()=>edit(()=>{state.bg.x=0;state.bg.y=0}));
+  on('bgReset','click',()=>edit(()=>{state.bg.scale=100;state.bg.x=0;state.bg.y=0}));
+  on('bgDim','input',()=>{beginEdit();state.bg.dim=num($('bgDim').value);$('bgDimN').value=$('bgDim').value;schedule()});
+  on('bgDim','change',()=>{endEdit();scheduleSave()});
+  on('bgDimN','change',()=>{beginEdit();state.bg.dim=clamp(num($('bgDimN').value)||0,0,80);endEdit();syncBgUI();schedule();scheduleSave()});
+  /* 前景 */
+  on('fgC0','input',()=>{beginEdit();state.fg.c0=$('fgC0').value;schedule()});
+  on('fgC1','input',()=>{beginEdit();state.fg.c1=$('fgC1').value;schedule()});
+  $('fgC0').addEventListener('change',()=>{endEdit();scheduleSave()});
+  $('fgC1').addEventListener('change',()=>{endEdit();scheduleSave()});
+  on('fgFade','change',()=>{beginEdit();state.fg.fade=$('fgFade').checked;endEdit();schedule();scheduleSave()});
+  on('fgRule','change',()=>{beginEdit();state.fg.rule=$('fgRule').checked;endEdit();schedule();scheduleSave()});
+  on('fgAlpha','input',()=>{beginEdit();state.fg.alpha=num($('fgAlpha').value);$('fgAlphaN').value=$('fgAlpha').value;schedule()});
+  on('fgAlpha','change',()=>{endEdit();scheduleSave()});
+  on('fgAlphaN','change',()=>{beginEdit();state.fg.alpha=clamp(num($('fgAlphaN').value)||100,20,100);endEdit();syncFgUI();schedule();scheduleSave()});
+  /* 边框 */
+  on('bdOn','change',()=>{beginEdit();state.border.on=$('bdOn').checked;endEdit();schedule();scheduleSave()});
+  on('bdC0','input',()=>{beginEdit();state.border.color=$('bdC0').value;state.border.grad.c0=$('bdC0').value;schedule()});
+  on('bdC1','input',()=>{beginEdit();state.border.grad.c1=$('bdC1').value;schedule()});
+  $('bdC0').addEventListener('change',()=>{endEdit();scheduleSave()});
+  $('bdC1').addEventListener('change',()=>{endEdit();scheduleSave()});
+  on('bdAng','input',()=>{beginEdit();state.border.grad.angle=num($('bdAng').value);schedule()});
+  on('bdAng','change',()=>{endEdit();scheduleSave()});
+  on('bdGlow','change',()=>{beginEdit();state.border.glow=$('bdGlow').checked;endEdit();schedule();scheduleSave()});
+  on('bdTexSel','change',()=>{beginEdit();state.border.tex=$('bdTexSel').value;endEdit();schedule();scheduleSave()});
+  /* 顶栏 */
+  document.querySelectorAll('[data-tpl]').forEach(b=>b.onclick=()=>applyTemplate(+b.dataset.tpl));
+  on('zIn','click',()=>{zoom=clamp(zoom+.25,.5,2);applyZoom();$('zLbl').textContent=r0(zoom*100)+'%'});
+  on('zOut','click',()=>{zoom=clamp(zoom-.25,.5,2);applyZoom();$('zLbl').textContent=r0(zoom*100)+'%'});
+  on('zLbl','click',()=>{zoom=1;applyZoom();$('zLbl').textContent='100%'});
+  on('btnUndo','click',undo); on('btnRedo','click',redo);
+  on('btnNew','click',()=>{ if(!confirm(t('confirmReset')))return;
+    beginEdit(); state=sanitize(null); endEdit(); syncStateToUI(); render(); scheduleSave() });
+  /* 素材 */
+  on('gRetry','click',()=>fetchRemote(true)); on('refetch','click',()=>fetchRemote(true));
+  on('gClose','click',gateClose);
+  on('btnTheme','click',cycleTheme); syncThemeBtn();
+  on('btnLang','click',cycleLang); syncLangBtn();
+  window.matchMedia&&matchMedia('(prefers-color-scheme: light)').addEventListener('change',syncThemeBtn);
+  on('gateChip','click',()=>{ gateDismissed=false; $('gateChip').classList.add('hide');
+    $('gate').classList.remove('hide') });
+  on('clearAssets','click',async()=>{ if(!confirm(t('confirmClear')))return;
+    await idbClear().catch(()=>{}); for(const k in LIB)LIB[k].length=0;
+    syncStateToUI(); render(); gateDismissed=false; $('gate').classList.remove('hide');
+    $('gateChip').classList.add('hide'); $('gRetry').classList.remove('hide');
+    prog('cacheCleared'); toast(t('cacheToast')) });
+  on('inFiles','change',onFilesPicked);
+  /* 存档 */
+  on('saveProj','click',exportProject);
+  on('loadProj','click',()=>$('inJson').click());
+  $('inJson').addEventListener('change',async e=>{ const f=e.target.files[0]; e.target.value=''; if(f)await importProject(f) });
+  on('btnPng','click',exportPNG);
+  on('btnPreview','click',()=>{ try{ render(); const url=cv.toDataURL('image/png'); const w=window.open('','_blank');
+      if(w)w.document.write('<title>'+escH(t('previewTitle'))+'</title><meta name="color-scheme" content="light dark">'+
+        '<body style="margin:0;display:flex;min-height:100vh;align-items:center;justify-content:center;background:'+
+        (themeEffective()==='dark'?'#0b0d11':'#f4f3f0')+'"><img src="'+url+'" width="512" height="512">');
+      else toast(t('popupBlocked')) }
+    catch(err){ toast(t('previewFail',{err:err.message})) } });
+  document.querySelectorAll('.mod>h2').forEach(h=>h.onclick=()=>{ const m=h.parentNode;
+    m.dataset.open=m.dataset.open==='1'?'0':'1' });
+  wireRangeReset();
+}
+function setBgOffsetX(v){ setBgAxis('x',v) }
+function setBgOffsetY(v){ setBgAxis('y',v) }
+
+/* ============================ 模板 ============================ */
+/* 整体替换 state：sanitize 会把模板合并成一份新对象，TPL 常量本身不会被后续编辑污染 */
+function applyTemplate(i){ const n=TPL[i]?+i:0; beginEdit();
+  state=sanitize(TPL[n]);
+  state.sel={id:state.layers[0].id,ids:[state.layers[0].id]};
+  endEdit(); syncStateToUI(); render(); scheduleSave();
+  toast(t('tplApplied',{name:t('tpl'+(n+1))})) }
+
+/* ============================ 导入导出 ============================ */
+function download(name,blob){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
+  a.click(); setTimeout(()=>URL.revokeObjectURL(a.href),4000) }
+/* 取画布前先同步重绘一次：render() 平时走 rAF 节流，刚提交完改动就点导出会拿到上一帧 */
+function exportPNG(){ try{ render(); const b=document.createElement('canvas'); b.width=b.height=512;
+    b.getContext('2d').drawImage(cv,0,0);
+    const title=state.layers.filter(l=>l.type==='text').map(l=>l.text).join(' ');
+    b.toBlob(bl=>{ if(!bl){toast(t('exportFail'));return}
+      download(slug(title)+'_512.png',bl); toast(t('pngOk')) },'image/png');
+    msg('exportDone',{time:new Date().toLocaleTimeString(LTIME[LANG])}) }
+  catch(e){ toast(t('pngFailTaint',{err:e.message})) } }
+async function exportProject(){ const out=JSON.parse(JSON.stringify(state)); out._app='civ6cover'; out.version=VER;
+  if($('embedCustom').checked){ out._custom={};
+    for(const kind in LIB) for(const rec of LIB[kind]) if(rec.key.indexOf('custom/')===0)
+      out._custom[rec.key]=await blobToDataURL(rec.file) }
+  download(t('projName'),new Blob([JSON.stringify(out,null,1)],{type:'application/json'}));
+  toast(t('projExported',{n:state.layers.length})) }
+function blobToDataURL(x){ if(typeof x==='string')return Promise.resolve(x);
+  if(!x)return Promise.resolve(null);
+  return new Promise(res=>{const r=new FileReader();r.onload=()=>res(r.result);r.onerror=()=>res(null);r.readAsDataURL(x)}) }
+function dataURLtoBlob(u){ const p=u.split(','),b=atob(p[1]),arr=new Uint8Array(b.length);
+  for(let i=0;i<b.length;i++)arr[i]=b.charCodeAt(i); return new Blob([arr],{type:p[0].slice(5).replace(';base64','')}) }
+async function importProject(file){ let obj; try{ obj=JSON.parse(await file.text()) }catch(e){ toast(t('jsonBad')); return }
+  if(obj.version!==1&&obj.version!==2){ toast(t('verBad')); return }
+  const legacy=obj.version===1;
+  if(obj._custom) for(const k in obj._custom){ try{ await addAsset(dataURLtoBlob(obj._custom[k]),k) }catch(e){} }
+  delete obj._custom; delete obj._app;
+  beginEdit(); state=sanitize(obj); endEdit(); syncStateToUI(); render(); scheduleSave();
+  toast(t(legacy?'projImportedV1':'projImported',{n:state.layers.length})) }
+
+/* 切换语言后重建所有由脚本生成的文案节点 */
+function rebuildI18nUI(){
+  ['bgGrid','fgGrid','icGrid'].forEach(id=>{ const e=$(id); if(e)e._sig=null });
+  syncLangBtn(); buildStaticUI(); syncRangeTitles();
+  renderLayerList(); buildFontSelect(); refreshAllLists();
+  refreshFontReport(); syncThemeBtn(); syncGateChip(); updateCounts();
+  for(const slot of ['msg','prog','report']){ const rec=LAST[slot];
+    if(rec){ const el=$(slot==='msg'?'stMsg':(slot==='prog'?'gProg':'assetReport'));
+      if(el)el.textContent=t(rec[0],rec[1]) } }
+  $('gateBody').innerHTML=t('gateBody');
+  syncStateToUI(); render() }
+window.__langHook=rebuildI18nUI;
+
+/* ============================ 启动 ============================ */
+function updateCounts(){ const e=$('stAssets');
+  if(e)e.textContent=t('stAssets',{n:libCount(),bg:LIB.bg.length,pl:LIB.plate.length,
+    ic:LIB.icon.length,bd:LIB.border.length});
+  updateLayerCount() }
+async function boot(){
+  applyStatic();
+  buildStaticUI(); wire();
+  const saved=loadSaved(); state=saved||sanitize(null);
+  buildFontSelect(); syncStateToUI();
+  loadFontCss();
+  let n=0; try{ n=await restoreAssets() }catch(e){ msg('cacheReadFail',{err:e.message}) }
+  sortLib(); refreshAllLists();
+  if(!state.bg.imgKey&&LIB.bg.length)state.bg.imgKey=LIB.bg[0].key;
+  render(); applyZoom(); fitZoom();
+  if(n){ msg('restoredN',{n:n}); if(haveAllRemote()){ gateSet(false); report('cacheOffline') } }
+  if(saved)toast(t('restoredLayers',{n:state.layers.length}));
+  fetchRemote(!haveAllRemote());
+  waitFonts().then(refreshFontReport);
+  window.__ready=true }
+window.addEventListener('error',e=>msg('scriptErr',{err:e.message||e.type}));
+boot();
+
+/* ============================ 自动化测试钩子 ============================ */
+window.__test={
+  getState:()=>JSON.parse(JSON.stringify(state)),
+  setState:(s)=>{ state=sanitize(s); syncStateToUI(); render(); return window.__test.getState() },
+  render, applyTemplate, select, addTextLayer, addIconLayer, delLayer, dupLayer, moveLayer, zOrder,
+  exportDataURL:()=>{ try{ return {ok:true,len:cv.toDataURL('image/png').length,w:cv.width,h:cv.height} }catch(e){ return {ok:false,error:e.message} } },
+  loadAsset:async(path,file)=>await addAsset(file,path),
+  lib:()=>Object.keys(LIB).reduce((o,k)=>(o[k]=LIB[k].map(r=>({key:r.key,name:r.name,w:r.w,h:r.h})),o),{}),
+  fonts:()=>FONTS.map(f=>({key:f.key,family:f.family,cdn:!!f.href,ready:fontLive(f),range:wRange(f)})),
+  hit:()=>JSON.parse(JSON.stringify(HIT)),
+  boxOf:(id)=>{ const l=state.layers.find(x=>x.id===(id||state.sel.id)); return l?boxOf(l):null },
+  counts:()=>({bg:LIB.bg.length,plate:LIB.plate.length,icon:LIB.icon.length,border:LIB.border.length}),
+  assetsReady:()=>haveAllRemote(),
+  snapTo:(x,y)=>{ const l=selLayer(); if(!l)return null; const b=boxOf(l); if(!b)return null;
+    if(x!==undefined)l.x=x; if(y!==undefined)l.y=y;
+    const before={x:l.x,y:l.y}; const g=applySnap(l,b); return {before,after:{x:l.x,y:l.y},guide:g} },
+  setBgAxis, bgSnap:()=>{ const before={x:state.bg.x,y:state.bg.y}; const g=snapBgOffset(); return {before,after:{x:state.bg.x,y:state.bg.y},guide:g} },
+  beginResize, resizeTo:(x,y)=>{ if(!drag||drag.mode!=='resize')return null; resizeTo({x,y});
+    const l=selLayer(); return l?{size:l.size,x:l.x,y:l.y}:null },
+  sel:()=>({id:state.sel.id,ids:(state.sel.ids||[]).slice()}),
+  /* 一次完整的"按下—拖动—抬起"，用来断言多选图层是否整组同步位移 */
+  simDrag:(ids,x0,y0,x1,y1)=>{ beginEdit();
+    ids.forEach((id,i)=>select(id,i?'add':''));
+    const S=selSet();
+    drag={mode:'move',anchor:ids[0],items:state.layers.filter(x=>S.has(x.id)).map(x=>
+      ({id:x.id,x:x.x,y:x.y,dx:x0-x.x,dy:y0-x.y}))};
+    const g=dragGroup({x:x1,y:y1}); const pos=selLayers().map(l=>({id:l.id,x:l.x,y:l.y}));
+    drag=null; endEdit(); syncStateToUI(); schedule(); scheduleSave(); return {guide:g,pos:pos} },
+  /* 三个上传口共用一个 input，自动化里直接指定类目，绕开原生文件对话框 */
+  setUpKind:(k)=>{ uploadKind=k },
+  /* 逐字排版的推进量与整行自然宽度对比：小型大写改的就是这里 */
+  textRun:(id)=>{ const l=state.layers.find(x=>x.id===(id||state.sel.id)); if(!l||l.type!=='text')return null;
+    const lines=String(l.text||'').split('\n'), out=[];
+    for(const ln of lines){ const runs=runsOf(ln,l); let sum=0;
+      for(const r of runs)sum+=r.w;
+      ctx.font=fontStr(l,l.size); out.push({chars:runs.map(r=>r.ch).join(''),sum:sum,
+        kerned:ctx.measureText(runs.map(r=>r.ch).join('')).width}) }
+    return {box:boxOf(l),runs:out} },
+  geom:{
+    bg:(key)=>{ const r=recOf(key||state.bg.imgKey); if(!r)return null; const g=bgGeom(r,state.bg.scale,state.bg.x,state.bg.y);
+      return {src:r.w+'x'+r.h,dst:r0(g.dw)+'x'+r0(g.dh),srcRatio:+(r.w/r.h).toFixed(4),dstRatio:+(g.dw/g.dh).toFixed(4)} },
+    plate:(key,tier)=>{ const r=recOf(key||state.fg.plateKey); if(!r)return null; const g=plateGeom(r,tier===undefined?state.fg.tier:tier);
+      return {src:r.w+'x'+r.h,srcRect:[g.sx,g.sy,g.sw,g.sh],dstRect:[g.dx,g.dy,g.dw,g.dh],
+              srcRatio:+(g.sw/g.sh).toFixed(4),dstRatio:+(g.dw/g.dh).toFixed(4)} },
+    icon:(key,size)=>{ const l=selIcon(); const r=recOf(key||(l&&l.key)); if(!r)return null;
+      const b=iconBox(r,size===undefined?(l?l.size:r.w):size);
+      return {src:r.w+'x'+r.h,dst:r0(b.w)+'x'+r0(b.h),srcRatio:+(r.w/r.h).toFixed(4),dstRatio:+(b.w/b.h).toFixed(4)} }
+  },
+  sanitize, defaults, migrate, API_FILE, API_TREE, API_BLOB, unzip, loadAssetsFromZip, fetchAssetBlob, MANIFEST,
+  lang:()=>LANG, setLang, i18n:(k,p)=>t(k,p),
+  texts:()=>{ const out={}; document.querySelectorAll('[data-i18n]').forEach(el=>{
+    out[el.getAttribute('data-i18n')]=el.textContent }); return out } }
+</script>
+</body>
+</html>
