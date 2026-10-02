@@ -364,7 +364,7 @@ var I18N={
     "reset":"清空重来",
     "confirmReset":"清空当前所有设置，回到初始模板？",
     "gateTitle":"正在拉取在线素材",
-    "gateBody":"素材托管在 <b>gitee.com/psdoc/civ6-mod-cover-maker</b>，首次使用需联网。<br>拉取后会缓存在浏览器本地（IndexedDB），之后断网也能用。原图只读不改。",
+    "gateBody":"素材托管在 <b>{repo}</b>，首次使用需联网。<br>拉取后会缓存在浏览器本地（IndexedDB），之后断网也能用。原图只读不改。",
     "gateRetry":"重新拉取在线素材",
     "gateInit":"准备中…",
     "gCloseTitle":"关闭（拉取仍在后台继续）",
@@ -422,6 +422,10 @@ var I18N={
     "hintTex":"纹理为程序化生成（金色拉丝 / 深色斜纹 / 石质噪点）。",
     "m7":"⑦ 素材与存档",
     "m7i":"自动保存已开启",
+    "lbSource":"素材库",
+    "srcGitee":"Gitee",
+    "srcGithub":"GitHub",
+    "srcSwitched":"素材库已切到 {name}",
     "refetch":"重新拉取在线素材",
     "clearAssets":"清除素材缓存",
     "exportJson":"导出工程 JSON",
@@ -443,7 +447,7 @@ var I18N={
     "pullN":"逐文件拉取 {done}/{total}（失败 {fail}）",
     "pullNok":"逐文件拉取 {done}/{total}",
     "repLine":"在线素材：{ok}/{total} 本次成功，库内共 {n} 张",
-    "repFail":"；失败 {n} 张，首个错误：{err}。反复失败多为 Gitee 接口限流——把素材打成 assets.zip 放仓库根即可一次取回。",
+    "repFail":"；失败 {n} 张，首个错误：{err}。反复失败多为接口限流——把素材打成 assets.zip 放仓库根即可一次取回。",
     "probeZip":"探测 assets.zip…",
     "readyN":"素材已就绪 {n} 张",
     "toastReady":"素材就绪：背景 {bg} / 底板 {pl} / 图标 {ic}",
@@ -570,7 +574,7 @@ var I18N={
     "reset":"Reset",
     "confirmReset":"Clear all current settings and return to the starting template?",
     "gateTitle":"Fetching online assets",
-    "gateBody":"Assets are hosted at <b>gitee.com/psdoc/civ6-mod-cover-maker</b>; the first run needs a network connection.<br>They are then cached locally in the browser (IndexedDB) and work offline. Originals are read-only.",
+    "gateBody":"Assets are hosted at <b>{repo}</b>; the first run needs a network connection.<br>They are then cached locally in the browser (IndexedDB) and work offline. Originals are read-only.",
     "gateRetry":"Re-fetch online assets",
     "gateInit":"Preparing…",
     "gCloseTitle":"Close (fetching continues in the background)",
@@ -628,6 +632,10 @@ var I18N={
     "hintTex":"Textures are generated in-app (brushed gold / dark twill / stone noise).",
     "m7":"⑦ Assets & Save",
     "m7i":"Autosave is on",
+    "lbSource":"Asset source",
+    "srcGitee":"Gitee",
+    "srcGithub":"GitHub",
+    "srcSwitched":"Asset source switched to {name}",
     "refetch":"Re-fetch online assets",
     "clearAssets":"Clear asset cache",
     "exportJson":"Export project JSON",
@@ -649,7 +657,7 @@ var I18N={
     "pullN":"Fetching file {done}/{total} ({fail} failed)",
     "pullNok":"Fetching file {done}/{total}",
     "repLine":"Online assets: {ok}/{total} fetched now, {n} in the library",
-    "repFail":"; {n} failed. First error: {err}. Repeated failures usually mean Gitee rate limiting — pack the assets into assets.zip at the repo root to fetch them in one call.",
+    "repFail":"; {n} failed. First error: {err}. Repeated failures usually mean API rate limiting — pack the assets into assets.zip at the repo root to fetch them in one call.",
     "probeZip":"Checking assets.zip…",
     "readyN":"Assets ready: {n}",
     "toastReady":"Assets ready — backgrounds {bg} / plates {pl} / icons {ic}",
@@ -776,7 +784,7 @@ var I18N={
     "reset":"Réinitialiser",
     "confirmReset":"Effacer tous les réglages et revenir au modèle initial ?",
     "gateTitle":"Récupération des visuels en ligne",
-    "gateBody":"Les visuels sont hébergés sur <b>gitee.com/psdoc/civ6-mod-cover-maker</b> ; la première utilisation demande une connexion.<br>Ils sont ensuite en cache local (IndexedDB) et disponibles hors ligne. Les originaux ne sont jamais modifiés.",
+    "gateBody":"Les visuels sont hébergés sur <b>{repo}</b> ; la première utilisation demande une connexion.<br>Ils sont ensuite en cache local (IndexedDB) et disponibles hors ligne. Les originaux ne sont jamais modifiés.",
     "gateRetry":"Relancer la récupération",
     "gateInit":"Préparation…",
     "gCloseTitle":"Fermer (le téléchargement continue en arrière-plan)",
@@ -834,6 +842,10 @@ var I18N={
     "hintTex":"Les motifs sont générés en interne (doré brossé / sergé foncé / bruit de pierre).",
     "m7":"⑦ Visuels et sauvegarde",
     "m7i":"Sauvegarde auto activée",
+    "lbSource":"Source des visuels",
+    "srcGitee":"Gitee",
+    "srcGithub":"GitHub",
+    "srcSwitched":"Source des visuels : {name}",
     "refetch":"Relancer la récupération",
     "clearAssets":"Vider le cache des visuels",
     "exportJson":"Exporter le projet JSON",
@@ -855,7 +867,7 @@ var I18N={
     "pullN":"Téléchargement {done}/{total} ({fail} échecs)",
     "pullNok":"Téléchargement {done}/{total}",
     "repLine":"Visuels en ligne : {ok}/{total} récupérés, {n} en bibliothèque",
-    "repFail":" ; {n} en échec, première erreur : {err}. Des échecs répétés signalent une limite Gitee — placez les visuels dans assets.zip à la racine du dépôt pour tout récupérer en un appel.",
+    "repFail":" ; {n} en échec, première erreur : {err}. Des échecs répétés signalent une limite d'API — placez les visuels dans assets.zip à la racine du dépôt pour tout récupérer en un appel.",
     "probeZip":"Vérification de assets.zip…",
     "readyN":"Visuels prêts : {n}",
     "toastReady":"Visuels prêts — fonds {bg} / plaques {pl} / icônes {ic}",
@@ -982,7 +994,7 @@ var I18N={
     "reset":"Сброс",
     "confirmReset":"Сбросить все настройки и вернуться к исходному шаблону?",
     "gateTitle":"Загрузка ресурсов из сети",
-    "gateBody":"Ресурсы размещены на <b>gitee.com/psdoc/civ6-mod-cover-maker</b>, при первом запуске нужен интернет.<br>Затем они кэшируются в браузере (IndexedDB) и работают офлайн. Оригинал не меняется.",
+    "gateBody":"Ресурсы размещены на <b>{repo}</b>, при первом запуске нужен интернет.<br>Затем они кэшируются в браузере (IndexedDB) и работают офлайн. Оригинал не меняется.",
     "gateRetry":"Загрузить заново",
     "gateInit":"Подготовка…",
     "gCloseTitle":"Закрыть (загрузка продолжится)",
@@ -1040,6 +1052,10 @@ var I18N={
     "hintTex":"Текстуры создаются в приложении (золотое волокно / тёмная саржа / каменный шум).",
     "m7":"⑦ Ресурсы и сохранения",
     "m7i":"Автосохранение вкл.",
+    "lbSource":"Библиотека",
+    "srcGitee":"Gitee",
+    "srcGithub":"GitHub",
+    "srcSwitched":"Библиотека переключена: {name}",
     "refetch":"Загрузить заново",
     "clearAssets":"Очистить кэш ресурсов",
     "exportJson":"Экспорт проекта JSON",
@@ -1061,7 +1077,7 @@ var I18N={
     "pullN":"Загрузка {done}/{total} (ошибок: {fail})",
     "pullNok":"Загрузка {done}/{total}",
     "repLine":"Ресурсы: {ok}/{total} загружено, всего {n}",
-    "repFail":"; ошибок: {n}, первая: {err}. Повторные сбои — обычно лимит Gitee: положите assets.zip в корень репозитория, чтобы получить всё за один запрос.",
+    "repFail":"; ошибок: {n}, первая: {err}. Повторные сбои — обычно лимит API: положите assets.zip в корень репозитория, чтобы получить всё за один запрос.",
     "probeZip":"Проверка assets.zip…",
     "readyN":"Ресурсы готовы: {n}",
     "toastReady":"Готово: фон {bg} / плашки {pl} / иконки {ic}",
@@ -1337,6 +1353,7 @@ function setLang(l){ const v=normLang(l);
       </div></div>
 
       <div class="mod" data-open="0"><h2><span data-i18n="m7">⑦ 素材与存档</span> <i data-i18n="m7i">自动保存已开启</i></h2><div class="modb">
+        <div class="row"><label data-i18n="lbSource">素材库</label><div class="tabs" id="srcTabs"></div></div>
         <div class="row"><button id="refetch" data-i18n="refetch">重新拉取在线素材</button><button id="clearAssets" data-i18n="clearAssets">清除素材缓存</button></div>
         <div class="sep"></div>
         <div class="row"><button id="saveProj" data-i18n="exportJson">导出工程 JSON</button><button id="loadProj" data-i18n="importJson">导入工程 JSON</button></div>
@@ -1368,15 +1385,36 @@ const r0=v=>Math.round(v);
 const debounce=(fn,ms)=>{let t;return(...a)=>{clearTimeout(t);t=setTimeout(()=>fn.apply(null,a),ms)}};
 const IMG_RE=/\.(png|jpe?g|webp|gif|bmp)$/i;
 
-/* ---------- 在线素材（Gitee） ----------
-   raw 地址（gitee.com/…/raw/… 与跳转的 raw.giteeusercontent.com）响应里**没有**
-   Access-Control-Allow-Origin，浏览器 fetch 必被 CORS 拦。只有 api/v5 端点回 ACAO: *。
-   冷启动优先读仓库根的 assets.zip（1~2 次接口调用），拿不到再退回逐文件 contents。 */
-const REPO='psdoc/civ6-mod-cover-maker';
-const API_BASE='https://gitee.com/api/v5/repos/'+REPO;
-const API_FILE=p=>API_BASE+'/contents/'+p.split('/').map(encodeURIComponent).join('/');
-const API_TREE=API_BASE+'/git/trees/master?recursive=1';
-const API_BLOB=sha=>API_BASE+'/git/blobs/'+sha;
+/* ---------- 在线素材（两个可切换的素材库） ----------
+   两边仓库内容一致：背景/ 文字底板/ 图标/ 加仓库根的 assets.zip，只是接口形状不同。
+   Gitee：raw 地址（gitee.com/…/raw/… 与跳转的 raw.giteeusercontent.com）响应里**没有**
+     Access-Control-Allow-Origin，file:// 页面 fetch 必被 CORS 拦；只有 api/v5 端点回 ACAO: *，
+     所以整包和逐文件都走 contents / git blobs 接口（base64）。
+   GitHub：raw.githubusercontent.com 实测回 Access-Control-Allow-Origin: null（file:// 页可读），
+     且不占 api.github.com 的 60 次/小时匿名限额，所以一律走 raw；接口只留给测试钩子。 */
+const SRC=[
+  {id:'gitee',branch:'master',nameKey:'srcGitee',repo:'gitee.com/psdoc/civ6-mod-cover-maker',
+   api:'https://gitee.com/api/v5/repos/psdoc/civ6-mod-cover-maker',raw:null},
+  {id:'github',branch:'main',nameKey:'srcGithub',repo:'github.com/psdoc0716/Civ6ModCoverMaker',
+   api:'https://api.github.com/repos/psdoc0716/Civ6ModCoverMaker',
+   raw:'https://raw.githubusercontent.com/psdoc0716/Civ6ModCoverMaker/main'} ];
+const SRC_KEY='civ6cover:source';
+/* 默认仍走 Gitee：老用户已缓存的键与取图通道都不变，想换在 ⑦ 里点一下 */
+let srcId=(function(){ try{ return localStorage.getItem(SRC_KEY) }catch(e){ return null } })()==='github'?'github':'gitee';
+function srcNow(){ return SRC.find(s=>s.id===srcId)||SRC[0] }
+const encPath=p=>String(p).split('/').map(encodeURIComponent).join('/');
+const API_FILE=p=>srcNow().api+'/contents/'+encPath(p);
+const API_TREE=()=>srcNow().api+'/git/trees/'+srcNow().branch+'?recursive=1';
+const API_BLOB=sha=>srcNow().api+'/git/blobs/'+sha;
+const RAW_FILE=p=>srcNow().raw?srcNow().raw+'/'+encPath(p):null;
+/* 切素材库只改"以后从哪取"：两边仓库路径一致，已缓存的素材照样命中 */
+function gateBodyText(){ return t('gateBody',{repo:srcNow().repo}) }
+function syncSourceUI(){ const host=$('srcTabs'); if(!host)return;
+  [].forEach.call(host.children,b=>b.classList.toggle('on',b.dataset.v===srcId));
+  const gb=$('gateBody'); if(gb)gb.innerHTML=gateBodyText() }
+function setSource(id){ const s=SRC.find(x=>x.id===id); if(!s||s.id===srcId)return;
+  srcId=s.id; try{ localStorage.setItem(SRC_KEY,s.id) }catch(e){}
+  syncSourceUI(); toast(t('srcSwitched',{name:t(s.nameKey)})); fetchRemote() }
 async function apiJson(u){ const r=await fetch(u); if(!r.ok)throw new Error('HTTP '+r.status); return r.json() }
 function b64ToU8(s){ const bin=atob(s.replace(/\s/g,'')),a=new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return a }
@@ -1414,7 +1452,9 @@ async function unzip(u8){ const dv=new DataView(u8.buffer,u8.byteOffset,u8.byteL
       out.push({name,bytes:method===0?raw:await inflateRaw(raw)}) }
     off+=46+nl+el+cl }
   return out }
-async function fetchAssetBlob(p){ const j=await apiJson(API_FILE(p));
+async function fetchAssetBlob(p){ const raw=RAW_FILE(p);
+  if(raw){ const r=await fetch(raw); if(!r.ok)throw new Error('HTTP '+r.status); return r.blob() }
+  const j=await apiJson(API_FILE(p));
   if(!j.content)throw new Error(t('apiEmpty'));
   const a=b64ToU8(j.content);
   if(j.size&&a.length!==j.size)throw new Error(t('apiSize',{a:a.length,b:j.size}));
@@ -1422,12 +1462,15 @@ async function fetchAssetBlob(p){ const j=await apiJson(API_FILE(p));
 /* 返回拉到的张数；zip 不存在则返回 -1 让调用方退回逐文件。
    解出来仍带 U+FFFD 说明文件名既不是 UTF-8 也不是 GBK（例如 Big5 / Shift-JIS），
    这时宁可退回逐文件接口——那边的路径是接口给的，编码一定正确。 */
-async function loadAssetsFromZip(){ let tree;
-  try{ tree=await apiJson(API_TREE) }catch(e){ return -1 }
-  const ent=(tree.tree||[]).find(x=>x.path==='assets.zip'); if(!ent)return -1;
-  const j=await apiJson(API_BLOB(ent.sha));
-  if(!j.content)throw new Error(t('zipTooBig'));
-  const files=await unzip(b64ToU8(j.content));
+async function loadAssetsFromZip(){ let bytes;
+  if(srcNow().raw){ const r=await fetch(RAW_FILE('assets.zip')); if(!r.ok)return -1;
+    bytes=new Uint8Array(await r.arrayBuffer()) }
+  else { let tree; try{ tree=await apiJson(API_TREE()) }catch(e){ return -1 }
+    const ent=(tree.tree||[]).find(x=>x.path==='assets.zip'); if(!ent)return -1;
+    const j=await apiJson(API_BLOB(ent.sha));
+    if(!j.content)throw new Error(t('zipTooBig'));
+    bytes=b64ToU8(j.content) }
+  const files=await unzip(bytes);
   if(files.some(f=>f.name.indexOf('\uFFFD')>=0))throw new Error(t('zipNameBad'));
   let ok=0;
   for(const f of files){ const p=f.name.replace(/^assets[\/\\]/,'');
@@ -2142,6 +2185,11 @@ function buildStaticUI(){
   const bs=$('bdTexSel'); bs.innerHTML='';
   TEXTURE_KINDS.forEach(k=>{const o=document.createElement('option');o.value=k.id;o.setAttribute('data-i18n',k.nameKey);
     o.textContent=t(k.nameKey);bs.appendChild(o)});
+  /* 素材库选择：源不在 state 里，所以自己管选中态，不走 tabs()（那会往撤销历史里塞一条） */
+  const srch=$('srcTabs'); if(srch){ srch.innerHTML='';
+    SRC.forEach(s=>{ const b=document.createElement('button'); b.setAttribute('data-i18n',s.nameKey);
+      b.textContent=t(s.nameKey); b.dataset.v=s.id; b.title=s.repo;
+      b.onclick=()=>setSource(s.id); srch.appendChild(b) }); syncSourceUI() }
 }
 
 /* ---------- 图层列表与操作 ---------- */
@@ -2498,7 +2546,7 @@ function rebuildI18nUI(){
   for(const slot of ['msg','prog','report']){ const rec=LAST[slot];
     if(rec){ const el=$(slot==='msg'?'stMsg':(slot==='prog'?'gProg':'assetReport'));
       if(el)el.textContent=t(rec[0],rec[1]) } }
-  $('gateBody').innerHTML=t('gateBody');
+  $('gateBody').innerHTML=gateBodyText();
   syncStateToUI(); render() }
 window.__langHook=rebuildI18nUI;
 
@@ -2573,7 +2621,8 @@ window.__test={
       const b=iconBox(r,size===undefined?(l?l.size:r.w):size);
       return {src:r.w+'x'+r.h,dst:r0(b.w)+'x'+r0(b.h),srcRatio:+(r.w/r.h).toFixed(4),dstRatio:+(b.w/b.h).toFixed(4)} }
   },
-  sanitize, defaults, migrate, API_FILE, API_TREE, API_BLOB, unzip, loadAssetsFromZip, fetchAssetBlob, MANIFEST,
+  sanitize, defaults, migrate, API_FILE, API_TREE, API_BLOB, RAW_FILE, SRC, unzip, loadAssetsFromZip, fetchAssetBlob, MANIFEST,
+  source:()=>srcId, setSource, srcRepo:()=>srcNow().repo,
   lang:()=>LANG, setLang, i18n:(k,p)=>t(k,p),
   texts:()=>{ const out={}; document.querySelectorAll('[data-i18n]').forEach(el=>{
     out[el.getAttribute('data-i18n')]=el.textContent }); return out } }
