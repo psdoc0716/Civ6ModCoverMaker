@@ -233,6 +233,10 @@ button.icon:hover{color:var(--accent);border-color:var(--accent-line);background
   background:var(--panel);border:1px solid var(--line);color:var(--dim);font-size:12px;line-height:1;
   display:flex;align-items:center;justify-content:center;opacity:.7}
 .cell .rm:hover{opacity:1;color:var(--danger);border-color:var(--danger)}
+/* 模板格：缩略图是整幅方形封面，比 56px 的素材格宽、列表更高才看得出构图。
+   生成的画布本就是 1:1，img 只改 height 让自然比例铺开，不需要 aspect-ratio */
+.tplGrid{grid-template-columns:repeat(auto-fill,minmax(74px,1fr));max-height:238px}
+.tplGrid .cell img{height:auto;object-fit:cover;border-radius:4px}
 .chk{display:flex;align-items:center;gap:6px;font-size:11px;color:var(--dim);cursor:pointer;user-select:none}
 .chk input{accent-color:var(--accent)}
 .sep{height:1px;background:var(--line);margin:2px 0}
@@ -349,6 +353,8 @@ var I18N={
     "shDown":"下移",
     "m3":"③ 图标",
     "m3i":"点缩略图即新增一层",
+    "m4":"④ 模板",
+    "m4i":"点缩略图即整体套用",
     "icNone":"当前选中的是文字图层：点上面的图标缩略图会新建一个图标图层。若要改已有图标，先在图层列表点一个「图」。",
     "lbIconSize":"大小",
     "uploadIcon":"上传自定义图标…",
@@ -375,8 +381,8 @@ var I18N={
     "chipMissing":"素材未就绪 · 点击查看",
     "chipToast":"已关闭拉取窗口，可在底部状态栏重新打开",
     "ready":"就绪",
-    "m4":"④ 背景",
-    "m4i":"9 张素材 + 纯色/渐变",
+    "m5":"⑤ 背景",
+    "m5i":"9 张素材 + 纯色/渐变",
     "tSolid":"纯色",
     "tGrad":"渐变",
     "tImage":"图片",
@@ -392,8 +398,8 @@ var I18N={
     "bgReset":"复位缩放与偏移",
     "lbDim":"压暗 %",
     "hintDim":"压暗是让文字读得清的关键，参考成品约 35–45%。偏移接近 0 会自动吸附居中。",
-    "m5":"⑤ 前景（文字底板）",
-    "m5i":"6 张素材 + 色条/渐变条",
+    "m6":"⑥ 前景（文字底板）",
+    "m6i":"6 张素材 + 色条/渐变条",
     "tNone":"无",
     "tBar":"色条",
     "tGradBar":"渐变条",
@@ -409,8 +415,8 @@ var I18N={
     "rule":"边缘双细金线",
     "hintPlate":"底板素材是 512×512 整幅方图，\"高度\"三档＝取底部 512/341/170 裁切，不做纵向拉伸。",
     "lbAlpha":"不透明 %",
-    "m6":"⑥ 边框",
-    "m6i":"3 档尺寸 · 纯色/渐变/纹理",
+    "m7":"⑦ 边框",
+    "m7i":"3 档尺寸 · 纯色/渐变/纹理",
     "lbBorder":"边框",
     "enable":"启用",
     "bdThin":"细 6",
@@ -420,8 +426,8 @@ var I18N={
     "lbTexture":"纹理",
     "glow":"内侧 1px 高光线",
     "hintTex":"纹理为程序化生成（金色拉丝 / 深色斜纹 / 石质噪点）。",
-    "m7":"⑦ 素材与存档",
-    "m7i":"自动保存已开启",
+    "m8":"⑧ 素材与存档",
+    "m8i":"自动保存已开启",
     "lbSource":"素材库",
     "srcGitee":"Gitee",
     "srcGithub":"GitHub",
@@ -491,6 +497,8 @@ var I18N={
     "savedAt":"已自动保存 {time}",
     "saveFail":"自动保存失败：{err}",
     "scriptErr":"脚本错误：{err}",
+    "tplEmpty":"在线模板目录是空的",
+    "tplFail":"模板拉取失败，已退回内置模板",
     "tplApplied":"已套用「{name}」",
     "exportFail":"导出失败",
     "pngOk":"已导出 512×512 PNG",
@@ -559,6 +567,8 @@ var I18N={
     "shDown":"Drop offset",
     "m3":"③ Icons",
     "m3i":"Click a thumbnail to add a layer",
+    "m4":"④ Templates",
+    "m4i":"Click a thumbnail to apply the cover",
     "icNone":"A text layer is selected: clicking a thumbnail above creates a new icon layer. To change an existing icon, pick an “I” in the layer list first.",
     "lbIconSize":"Size",
     "uploadIcon":"Upload custom icon…",
@@ -585,8 +595,8 @@ var I18N={
     "chipMissing":"Assets missing · click to view",
     "chipToast":"Fetch panel closed — reopen it from the status bar below",
     "ready":"Ready",
-    "m4":"④ Background",
-    "m4i":"9 assets + solid/gradient",
+    "m5":"⑤ Background",
+    "m5i":"9 assets + solid/gradient",
     "tSolid":"Solid",
     "tGrad":"Gradient",
     "tImage":"Image",
@@ -602,8 +612,8 @@ var I18N={
     "bgReset":"Reset zoom and offsets",
     "lbDim":"Dim %",
     "hintDim":"Dimming is what keeps the text readable — finished covers use about 35–45%. Offsets near 0 snap to centre.",
-    "m5":"⑤ Foreground (text plate)",
-    "m5i":"6 assets + bar/gradient bar",
+    "m6":"⑥ Foreground (text plate)",
+    "m6i":"6 assets + bar/gradient bar",
     "tNone":"None",
     "tBar":"Solid bar",
     "tGradBar":"Gradient bar",
@@ -619,8 +629,8 @@ var I18N={
     "rule":"Double thin gold edge line",
     "hintPlate":"Plates are full 512×512 squares. The three heights crop the bottom 512/341/170 px — no vertical stretching.",
     "lbAlpha":"Opacity %",
-    "m6":"⑥ Border",
-    "m6i":"3 widths · solid/gradient/texture",
+    "m7":"⑦ Border",
+    "m7i":"3 widths · solid/gradient/texture",
     "lbBorder":"Border",
     "enable":"Enable",
     "bdThin":"Thin 6",
@@ -630,8 +640,8 @@ var I18N={
     "lbTexture":"Texture",
     "glow":"1px inner highlight",
     "hintTex":"Textures are generated in-app (brushed gold / dark twill / stone noise).",
-    "m7":"⑦ Assets & Save",
-    "m7i":"Autosave is on",
+    "m8":"⑧ Assets & Save",
+    "m8i":"Autosave is on",
     "lbSource":"Asset source",
     "srcGitee":"Gitee",
     "srcGithub":"GitHub",
@@ -701,6 +711,8 @@ var I18N={
     "savedAt":"Autosaved at {time}",
     "saveFail":"Autosave failed: {err}",
     "scriptErr":"Script error: {err}",
+    "tplEmpty":"The online template folder is empty",
+    "tplFail":"Template fetch failed; built-in templates shown",
     "tplApplied":"Applied “{name}”",
     "exportFail":"Export failed",
     "pngOk":"Exported a 512×512 PNG",
@@ -769,6 +781,8 @@ var I18N={
     "shDown":"Décalage",
     "m3":"③ Icônes",
     "m3i":"Cliquez une vignette pour ajouter un calque",
+    "m4":"④ Modèles",
+    "m4i":"Cliquez une vignette pour appliquer la couverture",
     "icNone":"Un calque de texte est sélectionné : cliquer une vignette crée un nouveau calque d'icône. Pour modifier une icône existante, choisissez d'abord un « I » dans la liste.",
     "lbIconSize":"Taille",
     "uploadIcon":"Importer une icône…",
@@ -795,8 +809,8 @@ var I18N={
     "chipMissing":"Visuels manquants · cliquez",
     "chipToast":"Panneau fermé — le rouvrir depuis la barre d'état en bas",
     "ready":"Prêt",
-    "m4":"④ Fond",
-    "m4i":"9 visuels + uni/dégradé",
+    "m5":"⑤ Fond",
+    "m5i":"9 visuels + uni/dégradé",
     "tSolid":"Uni",
     "tGrad":"Dégradé",
     "tImage":"Image",
@@ -812,8 +826,8 @@ var I18N={
     "bgReset":"Réinitialiser échelle et décalages",
     "lbDim":"Assombrir %",
     "hintDim":"L'assombrissement rend le texte lisible — comptez 35–45 % sur les modèles. Un décalage proche de 0 s'aimante au centre.",
-    "m5":"⑤ Premier plan (plaque de texte)",
-    "m5i":"6 visuels + bande/bande dégradée",
+    "m6":"⑥ Premier plan (plaque de texte)",
+    "m6i":"6 visuels + bande/bande dégradée",
     "tNone":"Aucun",
     "tBar":"Bande",
     "tGradBar":"Bande dégradée",
@@ -829,8 +843,8 @@ var I18N={
     "rule":"Double filet doré au bord",
     "hintPlate":"Les plaques sont des carrés 512×512. Les trois hauteurs recadrent le bas 512/341/170 px — sans étirement vertical.",
     "lbAlpha":"Opacité %",
-    "m6":"⑥ Bordure",
-    "m6i":"3 largeurs · uni/dégradé/motif",
+    "m7":"⑦ Bordure",
+    "m7i":"3 largeurs · uni/dégradé/motif",
     "lbBorder":"Bordure",
     "enable":"Activer",
     "bdThin":"Fin 6",
@@ -840,8 +854,8 @@ var I18N={
     "lbTexture":"Motif",
     "glow":"Filet interne 1 px",
     "hintTex":"Les motifs sont générés en interne (doré brossé / sergé foncé / bruit de pierre).",
-    "m7":"⑦ Visuels et sauvegarde",
-    "m7i":"Sauvegarde auto activée",
+    "m8":"⑧ Visuels et sauvegarde",
+    "m8i":"Sauvegarde auto activée",
     "lbSource":"Source des visuels",
     "srcGitee":"Gitee",
     "srcGithub":"GitHub",
@@ -911,6 +925,8 @@ var I18N={
     "savedAt":"Sauvegarde auto à {time}",
     "saveFail":"Échec de la sauvegarde auto : {err}",
     "scriptErr":"Erreur de script : {err}",
+    "tplEmpty":"Le dossier de modèles en ligne est vide",
+    "tplFail":"Échec de récupération des modèles ; modèles intégrés affichés",
     "tplApplied":"« {name} » appliqué",
     "exportFail":"Export échoué",
     "pngOk":"PNG 512×512 exporté",
@@ -979,6 +995,8 @@ var I18N={
     "shDown":"Сдвиг вниз",
     "m3":"③ Иконки",
     "m3i":"Клик по миниатюре добавляет слой",
+    "m4":"④ Шаблоны",
+    "m4i":"Клик по миниатюре применяет обложку",
     "icNone":"Выбран текстовый слой: клик по миниатюре создаст новый слой-иконку. Чтобы изменить существующую иконку, сначала выберите «И» в списке слоёв.",
     "lbIconSize":"Размер",
     "uploadIcon":"Загрузить иконку…",
@@ -1005,8 +1023,8 @@ var I18N={
     "chipMissing":"Ресурсы не загружены · нажмите",
     "chipToast":"Панель закрыта — откройте снова в строке состояния",
     "ready":"Готов",
-    "m4":"④ Фон",
-    "m4i":"9 изображений + заливка/градиент",
+    "m5":"⑤ Фон",
+    "m5i":"9 изображений + заливка/градиент",
     "tSolid":"Заливка",
     "tGrad":"Градиент",
     "tImage":"Картинка",
@@ -1022,8 +1040,8 @@ var I18N={
     "bgReset":"Сброс масштаба и смещений",
     "lbDim":"Затемнение %",
     "hintDim":"Затемнение делает текст читаемым — в образцах 35–45%. Смещение около 0 притягивается к центру.",
-    "m5":"⑤ Передний план (плашка текста)",
-    "m5i":"6 изображений + полоса/градиент",
+    "m6":"⑥ Передний план (плашка текста)",
+    "m6i":"6 изображений + полоса/градиент",
     "tNone":"Нет",
     "tBar":"Полоса",
     "tGradBar":"Градиент",
@@ -1039,8 +1057,8 @@ var I18N={
     "rule":"Двойная золотая линия по краю",
     "hintPlate":"Плашки — квадраты 512×512. Три высоты обрезают нижние 512/341/170 пикс без растягивания.",
     "lbAlpha":"Непрозр. %",
-    "m6":"⑥ Рамка",
-    "m6i":"3 толщины · заливка/градиент/текстура",
+    "m7":"⑦ Рамка",
+    "m7i":"3 толщины · заливка/градиент/текстура",
     "lbBorder":"Рамка",
     "enable":"Вкл.",
     "bdThin":"Тонк. 6",
@@ -1050,8 +1068,8 @@ var I18N={
     "lbTexture":"Текстура",
     "glow":"Внутренний блик 1 пикс",
     "hintTex":"Текстуры создаются в приложении (золотое волокно / тёмная саржа / каменный шум).",
-    "m7":"⑦ Ресурсы и сохранения",
-    "m7i":"Автосохранение вкл.",
+    "m8":"⑧ Ресурсы и сохранения",
+    "m8i":"Автосохранение вкл.",
     "lbSource":"Библиотека",
     "srcGitee":"Gitee",
     "srcGithub":"GitHub",
@@ -1121,6 +1139,8 @@ var I18N={
     "savedAt":"Автосохранение {time}",
     "saveFail":"Автосохранение не удалось: {err}",
     "scriptErr":"Ошибка скрипта: {err}",
+    "tplEmpty":"Папка шаблонов онлайн пуста",
+    "tplFail":"Не удалось загрузить шаблоны; показаны встроенные",
     "tplApplied":"Применён «{name}»",
     "exportFail":"Экспорт не удался",
     "pngOk":"Экспортирован PNG 512×512",
@@ -1187,7 +1207,7 @@ function setLang(l){ const v=normLang(l);
 <body>
 <div id="app">
 
-  <!-- ===================== 左栏：图层 / 文字 / 图标 ===================== -->
+  <!-- ===================== 左栏：图层 / 文字 / 图标 / 模板 ===================== -->
   <aside id="panelL">
     <header><div class="brand">
         <svg class="logo" viewBox="0 0 32 32" aria-hidden="true" focusable="false">
@@ -1257,14 +1277,16 @@ function setLang(l){ const v=normLang(l);
         </div>
       </div></div>
 
+      <div class="mod" data-open="1"><h2><span data-i18n="m4">④ 模板</span> <i data-i18n="m4i">点缩略图即整体套用</i></h2><div class="modb">
+        <div class="grid tplGrid" id="tplGrid"></div>
+      </div></div>
+
     </div>
   </aside>
 
   <!-- ===================== 中间：画布 ===================== -->
   <section id="stage">
     <div id="stageBar">
-      <button data-tpl="0" class="pri" data-i18n="tpl1">模板 · 封面 1</button>
-      <button data-tpl="1" class="pri" data-i18n="tpl2">模板 · 封面 2</button>
       <span style="flex:1"></span>
       <button id="zOut">－</button><button id="zLbl" style="min-width:48px">100%</button><button id="zIn">＋</button>
       <button id="btnUndo" data-i18n="undo">撤销</button><button id="btnRedo" data-i18n="redo">重做</button>
@@ -1303,7 +1325,7 @@ function setLang(l){ const v=normLang(l);
   <aside id="panelR">
     <div class="pscroll">
 
-      <div class="mod" data-open="1"><h2><span data-i18n="m4">④ 背景</span> <i data-i18n="m4i">9 张素材 + 纯色/渐变</i></h2><div class="modb">
+      <div class="mod" data-open="1"><h2><span data-i18n="m5">⑤ 背景</span> <i data-i18n="m5i">9 张素材 + 纯色/渐变</i></h2><div class="modb">
         <div class="tabs" id="bgTabs"></div>
         <div id="bgSolid" class="row hide"><label data-i18n="lbColor">颜色</label><input type="color" id="bgColor"><div class="pal" id="bgPal"></div></div>
         <div id="bgGrad" class="hide" style="display:flex;flex-direction:column;gap:9px">
@@ -1324,7 +1346,7 @@ function setLang(l){ const v=normLang(l);
         <p class="hint" data-i18n="hintDim">压暗是让文字读得清的关键，参考成品约 35–45%。偏移接近 0 会自动吸附居中。</p>
       </div></div>
 
-      <div class="mod" data-open="0"><h2><span data-i18n="m5">⑤ 前景（文字底板）</span> <i data-i18n="m5i">6 张素材 + 色条/渐变条</i></h2><div class="modb">
+      <div class="mod" data-open="0"><h2><span data-i18n="m6">⑥ 前景（文字底板）</span> <i data-i18n="m6i">6 张素材 + 色条/渐变条</i></h2><div class="modb">
         <div class="tabs" id="fgTabs"></div>
         <div class="row"><label data-i18n="lbHeight">高度</label><div class="tabs" id="fgTier"></div></div>
         <div class="row"><label data-i18n="lbEdge">贴边</label><div class="tabs" id="fgPos"></div></div>
@@ -1341,7 +1363,7 @@ function setLang(l){ const v=normLang(l);
         <div class="row"><label data-i18n="lbAlpha">不透明 %</label><input type="range" id="fgAlpha" min="20" max="100" step="1" data-def="100"><input type="number" id="fgAlphaN" min="20" max="100"></div>
       </div></div>
 
-      <div class="mod" data-open="0"><h2><span data-i18n="m6">⑥ 边框</span> <i data-i18n="m6i">3 档尺寸 · 纯色/渐变/纹理</i></h2><div class="modb">
+      <div class="mod" data-open="0"><h2><span data-i18n="m7">⑦ 边框</span> <i data-i18n="m7i">3 档尺寸 · 纯色/渐变/纹理</i></h2><div class="modb">
         <div class="row wrap"><label data-i18n="lbBorder">边框</label><label class="chk"><input type="checkbox" id="bdOn"><span data-i18n="enable">启用</span></label>
           <div class="tabs" id="bdTier" style="flex:1"></div></div>
         <div class="tabs" id="bdTabs"></div>
@@ -1352,7 +1374,7 @@ function setLang(l){ const v=normLang(l);
         <p class="hint" data-i18n="hintTex">纹理为程序化生成（金色拉丝 / 深色斜纹 / 石质噪点）。</p>
       </div></div>
 
-      <div class="mod" data-open="0"><h2><span data-i18n="m7">⑦ 素材与存档</span> <i data-i18n="m7i">自动保存已开启</i></h2><div class="modb">
+      <div class="mod" data-open="0"><h2><span data-i18n="m8">⑧ 素材与存档</span> <i data-i18n="m8i">自动保存已开启</i></h2><div class="modb">
         <div class="row"><label data-i18n="lbSource">素材库</label><div class="tabs" id="srcTabs"></div></div>
         <div class="row"><button id="refetch" data-i18n="refetch">重新拉取在线素材</button><button id="clearAssets" data-i18n="clearAssets">清除素材缓存</button></div>
         <div class="sep"></div>
@@ -1399,14 +1421,18 @@ const SRC=[
    api:'https://api.github.com/repos/psdoc0716/Civ6ModCoverMaker',
    raw:'https://raw.githubusercontent.com/psdoc0716/Civ6ModCoverMaker/main'} ];
 const SRC_KEY='civ6cover:source';
-/* 默认仍走 Gitee：老用户已缓存的键与取图通道都不变，想换在 ⑦ 里点一下 */
+/* 默认仍走 Gitee：老用户已缓存的键与取图通道都不变，想换在 ⑧ 里点一下 */
 let srcId=(function(){ try{ return localStorage.getItem(SRC_KEY) }catch(e){ return null } })()==='github'?'github':'gitee';
 function srcNow(){ return SRC.find(s=>s.id===srcId)||SRC[0] }
 const encPath=p=>String(p).split('/').map(encodeURIComponent).join('/');
-const API_FILE=p=>srcNow().api+'/contents/'+encPath(p);
+/* 按库取址：目录清单只能走各自的 contents 接口（raw 域名没有列目录的能力），
+   正文按库分流——GitHub 的 raw 有 ACAO，Gitee 的 raw 没有，只能继续用 contents 的 base64。 */
+const dirApi=(s,p)=>s.api+'/contents/'+encPath(p);
+const rawApi=(s,p)=>s.raw?s.raw+'/'+encPath(p):null;
+const API_FILE=p=>dirApi(srcNow(),p);
 const API_TREE=()=>srcNow().api+'/git/trees/'+srcNow().branch+'?recursive=1';
 const API_BLOB=sha=>srcNow().api+'/git/blobs/'+sha;
-const RAW_FILE=p=>srcNow().raw?srcNow().raw+'/'+encPath(p):null;
+const RAW_FILE=p=>rawApi(srcNow(),p);
 /* 切素材库只改"以后从哪取"：两边仓库路径一致，已缓存的素材照样命中 */
 function gateBodyText(){ return t('gateBody',{repo:srcNow().repo}) }
 function syncSourceUI(){ const host=$('srcTabs'); if(!host)return;
@@ -1414,7 +1440,7 @@ function syncSourceUI(){ const host=$('srcTabs'); if(!host)return;
   const gb=$('gateBody'); if(gb)gb.innerHTML=gateBodyText() }
 function setSource(id){ const s=SRC.find(x=>x.id===id); if(!s||s.id===srcId)return;
   srcId=s.id; try{ localStorage.setItem(SRC_KEY,s.id) }catch(e){}
-  syncSourceUI(); toast(t('srcSwitched',{name:t(s.nameKey)})); fetchRemote() }
+  syncSourceUI(); toast(t('srcSwitched',{name:t(s.nameKey)})); fetchRemote(); loadTemplates() }
 async function apiJson(u){ const r=await fetch(u); if(!r.ok)throw new Error('HTTP '+r.status); return r.json() }
 function b64ToU8(s){ const bin=atob(s.replace(/\s/g,'')),a=new Uint8Array(bin.length);
   for(let i=0;i<bin.length;i++)a[i]=bin.charCodeAt(i); return a }
@@ -1605,6 +1631,9 @@ const idbPut=(k,v)=>idb('assets','readwrite',s=>s.put(v,k));
 const idbAll=()=>idb('assets','readonly',s=>s.getAll());
 const idbDel=k=>idb('assets','readwrite',s=>s.delete(k));
 const idbClear=()=>idb('assets','readwrite',s=>s.clear());
+/* kv 库存在线模板清单的 JSON：素材已经离线可用，模板列表也该跟着离线可用 */
+const idbKvGet=k=>idb('kv','readonly',s=>s.get(k));
+const idbKvSet=(k,v)=>idb('kv','readwrite',s=>s.put(v,k));
 
 /* ============================ 素材库 ============================ */
 const LIB={bg:[],plate:[],icon:[],border:[]};
@@ -1690,7 +1719,7 @@ async function fetchRemote(force){
   if(fail.length) report('repFail',{n:fail.length,err:firstErr||''});
   afterLoad(fail) }
 function afterLoad(fail){ const n=libCount();
-  refreshAllLists(); syncStateToUI(); render();
+  refreshAllLists(); syncStateToUI(); render(); resetTplThumbs();
   if(n){ gateSet(false); msg('readyN',{n:n});
     if(!fail||!fail.length) toast(t('toastReady',{bg:LIB.bg.length,pl:LIB.plate.length,ic:LIB.icon.length}));
     else toast(t('toastMissing',{n:fail.length}));
@@ -1699,8 +1728,8 @@ function afterLoad(fail){ const n=libCount();
 
 /* ============================ 状态 ============================ */
 function gradient(o){ return Object.assign({type:'linear',angle:135,c0:'#243447',c1:'#05070a'},o||{}) }
-/* 两份默认模板（用户从工具里导出的工程 JSON 原样内联）。
-   TPL[0] 同时是首次打开与「清空重来」的初始状态；模板按钮按序号整体替换 state。
+/* 两份内联模板（用户从工具里导出的工程 JSON 原样内联）。
+   TPL[0] 是首次打开与「清空重来」的初始状态；在线 模板/ 目录读不到时，④ 模板 也退回这两份。
    缺的字段由 merge(defaults(),…) 补齐，图层再过一遍 normalizeLayer，所以这里只写有差异的值。
    素材键都在在线清单 MANIFEST 里：素材没拉到时图层先空着，加载完自动出现。 */
 const TPL=[
@@ -1844,10 +1873,13 @@ function refreshFontReport(){ const bad=FONTS.filter(f=>!fontLive(f)).map(fName)
   $('fontReport').innerHTML=bad.length
     ?t('fontBad',{n:FONTS.length,bad:bad.length,list:bad.map(escH).join(LSEP[LANG])})
     :t('fontAllOk',{n:FONTS.length});
-  buildFontSelect() }
+  buildFontSelect();
+  /* 缩略图里的字用的是在线字体：字体到位那一轮才重算，数量没变就不重复干活 */
+  if(bad.length!==_fontBadN){ _fontBadN=bad.length; resetTplThumbs() } }
+let _fontBadN=-1;
 
 /* ============================ 绘制 ============================ */
-const cv=$('cv'),ctx=cv.getContext('2d');
+const cv=$('cv'); let ctx=cv.getContext('2d');   /* ctx 会被 renderOffline 临时挪到离屏画布 */
 function gradFill(g,w,h){ const ang=(g.angle||0)*Math.PI/180;
   if(g.type==='radial'){ const gr=ctx.createRadialGradient(w/2,h/2,Math.min(w,h)*0.06,w/2,h/2,Math.max(w,h)*0.72);
     gr.addColorStop(0,g.c0);gr.addColorStop(1,g.c1);return gr }
@@ -1986,6 +2018,13 @@ function drawTexBorder(b,t){ const base=b.color||'#c8a355', custom=b.tex.indexOf
     ctx.restore() } }
 
 function render(){ ctx.clearRect(0,0,W,H); drawBg(); drawFg(); drawLayers(); drawBorder(); updateSelBox() }
+/* 离屏渲染：整套绘制函数读的是模块级 ctx / state，这里在同一个同步块里把它们临时换成
+   离屏画布和模板状态，画完立刻原样还原——中途不让出主线程，主画布和选择框都不会闪一下。
+   edLayer 置空是为了让「正在编辑的那一层」照常画出来（编辑框只存在于主画布的 DOM 上）。 */
+function renderOffline(target,st){ const c0=ctx,s0=state,e0=edLayer,h0=HIT;
+  try{ ctx=target.getContext('2d'); state=st; edLayer=null; HIT=[];
+    ctx.clearRect(0,0,W,H); drawBg(); drawFg(); drawLayers(); drawBorder() }
+  finally{ ctx=c0; state=s0; edLayer=e0; HIT=h0 } }
 let _raf=null; function schedule(){ if(_raf)return; _raf=requestAnimationFrame(()=>{_raf=null;render()}) }
 
 /* ============================ 选择框 / 手柄 / 辅助线 ============================ */
@@ -2277,6 +2316,7 @@ function removeAsset(rec){ if(!rec||!isCustom(rec.key)||LIB[rec.kind].indexOf(re
     if(state.border.tex===rec.key)state.border.tex='brush' });
   idbDel(rec.key).catch(()=>{});
   setTimeout(()=>{ try{ URL.revokeObjectURL(rec.url) }catch(e){} },0);
+  resetTplThumbs();
   toast(t(refs?'assetRemovedRef':'assetRemoved',{name:rec.name,n:refs}));
   syncGateChip() }
 function refreshAllLists(){
@@ -2460,7 +2500,6 @@ function wire(){
   on('bdGlow','change',()=>{beginEdit();state.border.glow=$('bdGlow').checked;endEdit();schedule();scheduleSave()});
   on('bdTexSel','change',()=>{beginEdit();state.border.tex=$('bdTexSel').value;endEdit();schedule();scheduleSave()});
   /* 顶栏 */
-  document.querySelectorAll('[data-tpl]').forEach(b=>b.onclick=()=>applyTemplate(+b.dataset.tpl));
   on('zIn','click',()=>{zoom=clamp(zoom+.25,.5,2);applyZoom();$('zLbl').textContent=r0(zoom*100)+'%'});
   on('zOut','click',()=>{zoom=clamp(zoom-.25,.5,2);applyZoom();$('zLbl').textContent=r0(zoom*100)+'%'});
   on('zLbl','click',()=>{zoom=1;applyZoom();$('zLbl').textContent='100%'});
@@ -2468,7 +2507,8 @@ function wire(){
   on('btnNew','click',()=>{ if(!confirm(t('confirmReset')))return;
     beginEdit(); state=sanitize(null); endEdit(); syncStateToUI(); render(); scheduleSave() });
   /* 素材 */
-  on('gRetry','click',()=>fetchRemote(true)); on('refetch','click',()=>fetchRemote(true));
+  on('gRetry','click',()=>fetchRemote(true));
+  on('refetch','click',()=>{fetchRemote(true);loadTemplates()});
   on('gClose','click',gateClose);
   on('btnTheme','click',cycleTheme); syncThemeBtn();
   on('btnLang','click',cycleLang); syncLangBtn();
@@ -2499,13 +2539,102 @@ function wire(){
 function setBgOffsetX(v){ setBgAxis('x',v) }
 function setBgOffsetY(v){ setBgAxis('y',v) }
 
-/* ============================ 模板 ============================ */
-/* 整体替换 state：sanitize 会把模板合并成一份新对象，TPL 常量本身不会被后续编辑污染 */
-function applyTemplate(i){ const n=TPL[i]?+i:0; beginEdit();
-  state=sanitize(TPL[n]);
+/* ============================ 模板 ============================
+   左栏 ④：两个素材库的 模板/ 目录都读（当前选中的库优先，同名 JSON 只留一份），
+   每张用 renderOffline 走主渲染管线生成方形缩略图——和导出 PNG 是同一套绘制逻辑。
+   清单读不到（离网 / 接口被拦）时：有缓存就继续用缓存，没缓存才退回内联 TPL 并在格子上方标一句——所以这个分类永远不会是空的。 */
+const TPL_DIR='模板',TPL_KV='templates:v1',TPL_MAX=20,TPL_TH=144;
+/* 预览图还没生成时先占一个同样大小的深色方块，格子不会跟着抖 */
+const TPL_PH='data:image/svg+xml;charset=utf8,'+encodeURIComponent(
+  '<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512"><rect width="512" height="512" fill="#0d0f13"/></svg>');
+let TPLIST=[],tplNote=null,tplPicked=null,tplBusy=false;
+const PRE=document.createElement('canvas'); PRE.width=W; PRE.height=H;
+function tplName(e){ return e.name||t(e.nameKey||'') }
+/* 目录里可能混着 README.json 之类的东西：认出导出的工程 JSON 才收 */
+function looksLikeProject(o){ return isObj(o)&&(o._app==='civ6cover'||o.version===1||o.version===2||Array.isArray(o.layers)) }
+/* 清单必须走各自的 contents 接口：raw 域名没有列目录的能力。
+   正文分流：GitHub 的 raw 实测回 ACAO（file:// 拿到 null，https 站点拿到来源），
+   Gitee 的 raw 没有 ACAO，只能继续用 contents 的 base64。 */
+async function listTplDir(s){ const j=await apiJson(dirApi(s,TPL_DIR));
+  return (Array.isArray(j)?j:[]).filter(x=>x&&x.type==='file'&&/\.json$/i.test(x.name||'')).slice(0,TPL_MAX)
+    .map(x=>({name:tplTitle(x.name),path:x.path||TPL_DIR+'/'+x.name,src:s})) }
+function tplTitle(n){ return String(n||'').replace(/\.json$/i,'') }
+async function readTplJson(s,path){ const u=rawApi(s,path);
+  if(u){ const r=await fetch(u); if(!r.ok)throw new Error('HTTP '+r.status); return r.json() }
+  const j=await apiJson(dirApi(s,path)); if(!j.content)throw new Error(t('apiEmpty'));
+  return JSON.parse(new TextDecoder('utf-8').decode(b64ToU8(j.content))) }
+/* st 只给预览用；套用走 sanitize(e.obj) 重新生成一份，之后的编辑不会污染缩略图 */
+function tplEntry(it){ let o=it.json;
+  try{ o=typeof o==='string'?JSON.parse(o):o }catch(e){ return null }
+  if(!looksLikeProject(o))return null;
+  let st; try{ st=sanitize(o) }catch(e){ return null }
+  if(!st.layers.length)return null;
+  return {key:(it.src||'builtin')+'/'+(it.nameKey||it.name),name:it.name,nameKey:it.nameKey,
+    src:it.src||'builtin',obj:o,st:st,thumb:null,node:null,img:null} }
+function buildTplList(items){ TPLIST=items.map(tplEntry).filter(Boolean); tplPicked=null;
+  /* 显示顺序一律按名字排，和素材格同一套口径；"当前库优先"只体现在同名文件保留哪一份 */
+  TPLIST.sort((a,b)=>tplName(a).localeCompare(tplName(b),'zh-CN',{numeric:true}));
+  return TPLIST.length }
+function builtinTplItems(){ return TPL.map((o,i)=>({nameKey:'tpl'+(i+1),src:'builtin',json:o})) }
+/* 先拿缓存铺一次（离网可用），再联网覆盖；顺序按"当前库优先" */
+async function loadTemplates(){
+  let cached=null; try{ cached=await idbKvGet(TPL_KV) }catch(e){}
+  if(cached&&Array.isArray(cached.items)&&buildTplList(cached.items)){
+    tplNote=null; syncTplGrid(); makeTplThumbs() }
+  const order=[srcNow()].concat(SRC.filter(s=>s!==srcNow()));
+  const lists=await Promise.all(order.map(s=>listTplDir(s).catch(()=>null)));
+  const items=[],seen={}; let listed=0;
+  for(let i=0;i<lists.length;i++){ const L=lists[i]; if(!L)continue; listed++;
+    for(const f of L){ if(seen[f.name])continue;
+      try{ const o=await readTplJson(f.src,f.path);
+        if(looksLikeProject(o)){ seen[f.name]=1; items.push({name:f.name,src:f.src.id,json:o}) } }
+      catch(e){ seen[f.name]=1 } } }
+  if(items.length){ tplNote=null; buildTplList(items);
+    idbKvSet(TPL_KV,{items:items.map(x=>({name:x.name,src:x.src,json:x.json}))}).catch(()=>{}) }
+  else if(listed){ tplNote='tplEmpty'; buildTplList(builtinTplItems()) }
+  else if(!TPLIST.length){ tplNote='tplFail'; buildTplList(builtinTplItems()) }
+  /* 目录全打不通、但缓存里已经铺好了在线清单：就继续用缓存，一句提示都不给 */
+  syncTplGrid(); makeTplThumbs() }
+/* 让出一帧给浏览器画。后台标签页里 rAF 一次都不响（实测 document.hidden 时永远不回调），
+   所以再拿一个 120ms 定时器兜底赛跑——否则用户开完工具切到别的窗口，预览图就永远生成不出来。 */
+const yieldUI=()=>new Promise(r=>{ let d=false; const go=()=>{ if(!d){d=true;r()} };
+  requestAnimationFrame(go); setTimeout(go,120) });
+/* 逐张生成，每张之间让出一帧：模板多了也不会把主线程按住不动。
+   tplAgain 是脏标志——中途素材/字体到位或清单被整体替换时，正在跑的这一轮收尾后会重跑一遍，
+   否则那些被清掉的缩略图没人补画（实测会正好缺第一张）。 */
+let tplAgain=false;
+async function makeTplThumbs(){ if(tplBusy){ tplAgain=true; return }
+  tplBusy=true;
+  do{ tplAgain=false;
+    for(const e of TPLIST){ if(!e.thumb){ e.thumb=tplThumb(e.st); if(e.img)e.img.src=e.thumb||TPL_PH }
+      await yieldUI() }
+  }while(tplAgain)
+  tplBusy=false }
+function tplThumb(st){ renderOffline(PRE,st);
+  const c=document.createElement('canvas'); c.width=c.height=TPL_TH;
+  const g=c.getContext('2d'); g.imageSmoothingEnabled=true; g.imageSmoothingQuality='high';
+  g.drawImage(PRE,0,0,TPL_TH,TPL_TH);
+  try{ return c.toDataURL('image/png') }catch(e){ return null } }
+/* 素材或字体会改变画面，两者到位后把缩略图作废重算 */
+function resetTplThumbs(){ for(const e of TPLIST)e.thumb=null; if(TPLIST.length)makeTplThumbs() }
+function syncTplGrid(){ const host=$('tplGrid'); if(!host)return; const sc=host.scrollTop;
+  const sig=TPLIST.map(e=>e.key+(e.thumb?1:0)).join(',')+'|'+(tplPicked||'')+'|'+LANG+'|'+(tplNote||'');
+  if(host._sig===sig){ host.scrollTop=sc; return }
+  host._sig=sig; host.innerHTML='';
+  if(tplNote){ const p=document.createElement('p'); p.className='hint'; p.textContent=t(tplNote); host.appendChild(p) }
+  TPLIST.forEach(e=>{ const nm=tplName(e);
+    const d=document.createElement('div'); d.className='cell'+(e.key===tplPicked?' on':'');
+    const im=document.createElement('img'); im.alt=nm; im.src=e.thumb||TPL_PH;
+    const sp=document.createElement('span'); sp.textContent=nm;
+    d.title=nm; d.onclick=()=>applyTpl(e);
+    e.node=d; e.img=im; d.appendChild(im); d.appendChild(sp); host.appendChild(d) });
+  host.scrollTop=sc }
+/* 整体替换 state：sanitize 会把模板合并成一份新对象，TPL 常量与条目本身都不会被后续编辑污染 */
+function applyTpl(e){ if(!e)return; if(editorOpen())closeEditor(true);
+  beginEdit(); state=sanitize(e.obj);
   state.sel={id:state.layers[0].id,ids:[state.layers[0].id]};
   endEdit(); syncStateToUI(); render(); scheduleSave();
-  toast(t('tplApplied',{name:t('tpl'+(n+1))})) }
+  tplPicked=e.key; syncTplGrid(); toast(t('tplApplied',{name:tplName(e)})) }
 
 /* ============================ 导入导出 ============================ */
 function download(name,blob){ const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=name;
@@ -2539,9 +2668,9 @@ async function importProject(file){ let obj; try{ obj=JSON.parse(await file.text
 
 /* 切换语言后重建所有由脚本生成的文案节点 */
 function rebuildI18nUI(){
-  ['bgGrid','fgGrid','icGrid'].forEach(id=>{ const e=$(id); if(e)e._sig=null });
+  ['bgGrid','fgGrid','icGrid','tplGrid'].forEach(id=>{ const e=$(id); if(e)e._sig=null });
   syncLangBtn(); buildStaticUI(); syncRangeTitles();
-  renderLayerList(); buildFontSelect(); refreshAllLists();
+  renderLayerList(); buildFontSelect(); refreshAllLists(); syncTplGrid();
   refreshFontReport(); syncThemeBtn(); syncGateChip(); updateCounts();
   for(const slot of ['msg','prog','report']){ const rec=LAST[slot];
     if(rec){ const el=$(slot==='msg'?'stMsg':(slot==='prog'?'gProg':'assetReport'));
@@ -2568,6 +2697,7 @@ async function boot(){
   if(n){ msg('restoredN',{n:n}); if(haveAllRemote()){ gateSet(false); report('cacheOffline') } }
   if(saved)toast(t('restoredLayers',{n:state.layers.length}));
   fetchRemote(!haveAllRemote());
+  loadTemplates();
   waitFonts().then(refreshFontReport);
   window.__ready=true }
 window.addEventListener('error',e=>msg('scriptErr',{err:e.message||e.type}));
@@ -2577,7 +2707,25 @@ boot();
 window.__test={
   getState:()=>JSON.parse(JSON.stringify(state)),
   setState:(s)=>{ state=sanitize(s); syncStateToUI(); render(); return window.__test.getState() },
-  render, applyTemplate, select, addTextLayer, addIconLayer, delLayer, dupLayer, moveLayer, zOrder,
+  render, applyTpl, select, addTextLayer, addIconLayer, delLayer, dupLayer, moveLayer, zOrder,
+  /* 在线模板：列表快照 / 套用 / 两个库各自的目录清单 / 缓存与失败标志 */
+  tplList:()=>TPLIST.map(e=>({key:e.key,name:tplName(e),src:e.src,thumb:e.thumb?e.thumb.length:0,
+    layers:e.st.layers.length,bg:e.st.bg.imgKey,plate:e.st.fg.plateKey})),
+  tplApply:(i)=>{ const e=TPLIST[i]; if(!e)return null; applyTpl(e); return tplName(e) },
+  tplState:()=>({count:TPLIST.length,note:tplNote,picked:tplPicked,busy:tplBusy,again:tplAgain}),
+  tplDir:(id)=>listTplDir(SRC.find(s=>s.id===(id||srcId))||srcNow()),
+  tplRead:(id,name)=>readTplJson(SRC.find(s=>s.id===(id||srcId))||srcNow(),TPL_DIR+'/'+name+'.json'),
+  tplKv:()=>idbKvGet(TPL_KV).then(v=>v?{n:(v.items||[]).length,src:[...new Set((v.items||[]).map(x=>x.src))]}:null),
+  tplKvSet:(v)=>idbKvSet(TPL_KV,v).then(()=>true),
+  reload:()=>loadTemplates(),
+  tplGridHTML:()=>{ const h=$('tplGrid'); return h?{cells:h.querySelectorAll('.cell').length,
+    hint:(h.querySelector('.hint')||{}).textContent||'',sig:h._sig||''}:null },
+  /* 断网没法真造，靠这两条分支验文案+格子：提示永远和内置模板同屏出现。clear 用来模拟首次打开且没缓存 */
+  tplForce:(m)=>{ if(m==='clear'){ TPLIST=[]; tplNote=null; syncTplGrid();
+      return {count:0,note:tplNote,hint:($('tplGrid').querySelector('.hint')||{}).textContent||''} }
+    if(m==='fail'||m==='empty'){ buildTplList(builtinTplItems());
+      tplNote=m==='fail'?'tplFail':'tplEmpty'; syncTplGrid(); makeTplThumbs() }
+    return {count:TPLIST.length,note:tplNote,hint:($('tplGrid').querySelector('.hint')||{}).textContent||''} },
   exportDataURL:()=>{ try{ return {ok:true,len:cv.toDataURL('image/png').length,w:cv.width,h:cv.height} }catch(e){ return {ok:false,error:e.message} } },
   loadAsset:async(path,file)=>await addAsset(file,path),
   lib:()=>Object.keys(LIB).reduce((o,k)=>(o[k]=LIB[k].map(r=>({key:r.key,name:r.name,w:r.w,h:r.h})),o),{}),
@@ -2622,6 +2770,7 @@ window.__test={
       return {src:r.w+'x'+r.h,dst:r0(b.w)+'x'+r0(b.h),srcRatio:+(r.w/r.h).toFixed(4),dstRatio:+(b.w/b.h).toFixed(4)} }
   },
   sanitize, defaults, migrate, API_FILE, API_TREE, API_BLOB, RAW_FILE, SRC, unzip, loadAssetsFromZip, fetchAssetBlob, MANIFEST,
+  dirApi, rawApi, TPL_DIR, TPL_KV, renderOffline, PRE,
   source:()=>srcId, setSource, srcRepo:()=>srcNow().repo,
   lang:()=>LANG, setLang, i18n:(k,p)=>t(k,p),
   texts:()=>{ const out={}; document.querySelectorAll('[data-i18n]').forEach(el=>{
