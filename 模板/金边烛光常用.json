@@ -1,0 +1,117 @@
+{
+ "version": 2,
+ "bg": {
+  "mode": "image",
+  "color": "#14171c",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#243447",
+   "c1": "#05070a"
+  },
+  "imgKey": "背景/BG_6.jpg",
+  "scale": 100,
+  "x": 0,
+  "y": 0,
+  "dim": 45
+ },
+ "fg": {
+  "type": "plate",
+  "tier": 1,
+  "pos": "bottom",
+  "c0": "#f7e6b0",
+  "c1": "#a8802c",
+  "alpha": 100,
+  "fade": false,
+  "rule": true,
+  "plateKey": "文字底板/2.png"
+ },
+ "border": {
+  "on": true,
+  "tier": 0,
+  "type": "grad",
+  "color": "#f2be38",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#f5e1a4",
+   "c1": "#8a6a22"
+  },
+  "tex": "brush",
+  "glow": false
+ },
+ "layers": [
+  {
+   "type": "text",
+   "id": "Lbq28_18",
+   "text": "Civilization mod template",
+   "x": 256,
+   "y": 395,
+   "size": 28,
+   "color": "#ffffff",
+   "fontKey": "en-cinzel",
+   "weight": 575,
+   "ls": 3.5,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": true,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": true,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "text",
+   "id": "Lbq28_19",
+   "text": "文明模板",
+   "x": 256,
+   "y": 486,
+   "size": 60,
+   "color": "#0d0f13",
+   "fontKey": "cn-serif",
+   "weight": 750,
+   "ls": 25,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": false,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": false,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "icon",
+   "id": "Ld4xa_20",
+   "key": "图标/XP2_Victories220.png",
+   "x": 256,
+   "y": 208,
+   "size": 301,
+   "visible": true
+  }
+ ],
+ "sel": {
+  "id": null
+ },
+ "snap": true,
+ "_app": "civ6cover"
+}

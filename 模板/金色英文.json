@@ -1,0 +1,117 @@
+{
+ "version": 2,
+ "bg": {
+  "mode": "image",
+  "color": "#14171c",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#243447",
+   "c1": "#05070a"
+  },
+  "imgKey": "背景/BG_5.jpg",
+  "scale": 100,
+  "x": 0,
+  "y": 0,
+  "dim": 40
+ },
+ "fg": {
+  "type": "bar",
+  "tier": 2,
+  "pos": "bottom",
+  "c0": "#2e3745",
+  "c1": "#1a1429",
+  "alpha": 100,
+  "fade": false,
+  "rule": false,
+  "plateKey": null
+ },
+ "border": {
+  "on": true,
+  "tier": 1,
+  "type": "solid",
+  "color": "#f2be38",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#f2be38",
+   "c1": "#8a6a22"
+  },
+  "tex": "brush",
+  "glow": false
+ },
+ "layers": [
+  {
+   "type": "text",
+   "id": "L4d7b_14",
+   "text": "Cover Maker 2026",
+   "x": 256,
+   "y": 348,
+   "size": 31,
+   "color": "#e8ecf2",
+   "fontKey": "en-cinzel",
+   "weight": 540,
+   "ls": 3,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": true,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": true,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "text",
+   "id": "L4d7b_15",
+   "text": "Civilization\ntemplate",
+   "x": 256,
+   "y": 424,
+   "size": 52,
+   "color": "#ffffff",
+   "fontKey": "en-cinzel",
+   "weight": 585,
+   "ls": 3,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 98,
+   "smallCaps": false,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 1,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": false,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "icon",
+   "id": "L52tj_17",
+   "key": "图标/Hex_DistrictCommercial.png",
+   "x": 256,
+   "y": 172,
+   "size": 247,
+   "visible": true
+  }
+ ],
+ "sel": {
+  "id": null
+ },
+ "snap": true,
+ "_app": "civ6cover"
+}

@@ -1,0 +1,147 @@
+{
+ "version": 2,
+ "bg": {
+  "mode": "image",
+  "color": "#14171c",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#243447",
+   "c1": "#05070a"
+  },
+  "imgKey": "背景/BG_2.jpg",
+  "scale": 100,
+  "x": 0,
+  "y": 0,
+  "dim": 0
+ },
+ "fg": {
+  "type": "none",
+  "tier": 1,
+  "pos": "bottom",
+  "c0": "#c8a355",
+  "c1": "#a8802c",
+  "alpha": 100,
+  "fade": false,
+  "rule": true,
+  "plateKey": "文字底板/2.png"
+ },
+ "border": {
+  "on": true,
+  "tier": 1,
+  "type": "grad",
+  "color": "#f5e1a4",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#f5e1a4",
+   "c1": "#8a6a22"
+  },
+  "tex": "brush",
+  "glow": false
+ },
+ "layers": [
+  {
+   "type": "text",
+   "id": "tpl2a",
+   "text": "Civ6 Mod Cover Maker",
+   "x": 256,
+   "y": 420,
+   "size": 36,
+   "color": "#f2be38",
+   "fontKey": "en-cinzel",
+   "weight": 585,
+   "ls": 0,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": true,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": false,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "text",
+   "id": "tpl2b",
+   "text": "Mod封面制作工具",
+   "x": 256,
+   "y": 376,
+   "size": 50,
+   "color": "#f2be38",
+   "fontKey": "cn-serif",
+   "weight": 675,
+   "ls": 0,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": false,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": false,
+    "blur": 8,
+    "dy": 4,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "icon",
+   "id": "Lat9r_4",
+   "key": "图标/Hex_DistrictCommercial.png",
+   "x": 256,
+   "y": 177,
+   "size": 247,
+   "visible": true
+  },
+  {
+   "type": "text",
+   "id": "L8j50_2",
+   "text": "by psdoc烛光",
+   "x": 256,
+   "y": 475,
+   "size": 20,
+   "color": "#ffffff",
+   "fontKey": "en-cinzel",
+   "weight": 585,
+   "ls": 8,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": false,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": false,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  }
+ ],
+ "sel": {
+  "id": null,
+  "ids": []
+ },
+ "snap": true,
+ "_app": "civ6cover"
+}
