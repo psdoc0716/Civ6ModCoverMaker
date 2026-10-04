@@ -1,0 +1,136 @@
+{
+ "version": 2,
+ "bg": {
+  "mode": "grad",
+  "color": "#2e3745",
+  "grad": {
+   "type": "linear",
+   "angle": 0,
+   "c0": "#2a5589",
+   "c1": "#05070a"
+  },
+  "imgKey": "背景/BG_6.jpg",
+  "scale": 100,
+  "x": 0,
+  "y": 0,
+  "dim": 35
+ },
+ "fg": {
+  "type": "bar",
+  "tier": 2,
+  "pos": "bottom",
+  "c0": "#4426d9",
+  "c1": "#6274fe",
+  "alpha": 100,
+  "fade": false,
+  "rule": true,
+  "plateKey": "文字底板/5.png"
+ },
+ "border": {
+  "on": true,
+  "tier": 1,
+  "type": "grad",
+  "color": "#ffffff",
+  "grad": {
+   "type": "linear",
+   "angle": 135,
+   "c0": "#ffffff",
+   "c1": "#d6d9ff"
+  },
+  "tex": "brush",
+  "glow": false
+ },
+ "layers": [
+  {
+   "type": "text",
+   "id": "Lbq28_18",
+   "text": "Civilization mod template",
+   "x": 256,
+   "y": 351,
+   "size": 33,
+   "color": "#ffffff",
+   "fontKey": "en-grotesk",
+   "weight": 700,
+   "ls": 2,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": true,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": true,
+    "blur": 6,
+    "dy": 2,
+    "color": "#000000"
+   }
+  },
+  {
+   "type": "text",
+   "id": "Lbq28_19",
+   "text": "文明模板",
+   "x": 256,
+   "y": 457,
+   "size": 80,
+   "color": "#ffffff",
+   "fontKey": "cn-douyin",
+   "weight": 400,
+   "ls": 18,
+   "bold": false,
+   "italic": false,
+   "align": "center",
+   "lh": 120,
+   "smallCaps": false,
+   "visible": true,
+   "stroke": {
+    "on": false,
+    "width": 2,
+    "color": "#000000"
+   },
+   "shadow": {
+    "on": true,
+    "blur": 10,
+    "dy": 2,
+    "color": "#3b2999"
+   }
+  },
+  {
+   "type": "icon",
+   "id": "Ld4xa_20",
+   "key": "图标/GovernorSelected_Educator.png",
+   "x": 207,
+   "y": 180,
+   "size": 278,
+   "visible": true
+  },
+  {
+   "type": "icon",
+   "id": "L9hyo_1",
+   "key": "图标/Hex_DistrictCampus.png",
+   "x": 365,
+   "y": 130,
+   "size": 140,
+   "visible": true
+  },
+  {
+   "type": "icon",
+   "id": "Ld3wh_2",
+   "key": "图标/Hex_DistrictTheater.png",
+   "x": 412,
+   "y": 241,
+   "size": 115,
+   "visible": true
+  }
+ ],
+ "sel": {
+  "id": null,
+  "ids": []
+ },
+ "snap": true,
+ "_app": "civ6cover"
+}
